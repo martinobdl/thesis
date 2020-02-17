@@ -1,0 +1,18 @@
+\chapter{Information, Prediction and Investing}
+
+In Chapter \ref{ch:OnlineLearning} we described at a high level the framework of Online Learning in Adversarial environment. Now we draw the connections between that and predictions. It surly seems counter intuitive to speak about predictions in an adversarial framework, since we are used to think about predictions only of stochastic processes. The root of this formulation are to be traced back to the Bell Laboratories in the '50, from works of Kelly \cite{kelly2011new}, linking sequential betting and information rate. This connection is of primary importance to understand sequential investing as an instance of sequential decision problem.
+We first draw the parallelism between probability assignment over discrete events and Online Learning and then extend the discussion to sequential investments.
+
+\section{Probability assignment}
+The decision space $\mathcal D$ in the case of finite $N$ possible bets is the $\Delta_{N-1}\subset \mathbb R^{N}$ probability simplex while the outcome $\mathcal Y$ space is the set $\{1,\ldots,N\}$, representing the winning bet at each turn. The loss function $f(x,y)$ should have these natural properties: low when $x_y~1$ and high when $x_y~0$ where $x_y$ is the probability assigned to the outcome $y$. The inverse log-likelihood seems a reasonable proposal, simply because the multiplicative additive property of the logarithm but has also a deeper connection to information that we will discuss later on:
+
+\begin{definition}(Self Information Loss).
+    In the sequential probability assignment problem the loss function $f(x,y)$, $x\in \Delta_{N-1}$ and $y\in[1,\ldots,N]$ is defined as
+    $$f(x,y)=-\log(x_y)$$
+where $x_y$ is the probability assigned to outcome $y\in\mathcal Y$.
+\end{definition}
+
+In the case of simulable experts, the prediction $x_t$ of the agent is a function of the history of outcomes $r^{t-1}:=\{r_1,r_2,\ldots,r_{t-1}\}\in\mathcal Y^{t-1}$. An expert can be thought of as a set of functions $g_k:\mathcal Y^{k-1}\to\Delta_{N-1}$.
+
+
+
