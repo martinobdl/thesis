@@ -1,5 +1,4 @@
-\chapter{Online Learning}\label{ch:OnlineLearning}
-\todo{definire $h_t$ come la storia}
+3\chapter{Online Learning}\label{ch:OnlineLearning}
 Online Learning is a theoretical framework to formalize a sequential decision problem in which an agent has to take consecutive actions in an environment. Every time the agent takes an action, the environment returns a loss signal (or reward depending on the convention on the sign). This framework is similar to other sequential decision problems such as Reinforcement Learning \cite{sutton1998introduction}, with the exception that the loss function is decided by an adversary which has complete knowledge of your strategy in advance, rather that be described by a stochastic probability kernel.
 The purpose of this section is to present the general framework of Online Game Playing and to introduce the notation necessary for the development of the theory. We will define formally the framework of Online Learning with Expert Advice, which is one the most studied framework of Online Learning, due to its ability to include many other frameworks, such as Multi Armed Bandit or Online Convex Optimization. \todo{maybe add DAgger}
 Then we will expose the concept of \emph{regret} and present the relation of Online Learning to classical repeated games from the field of Game Theory. Modern finance has more and more the need for a Game Theoretic approach, this is evident when one looks at the field of on venue market making, that can be modeled naturally as a repeated game, or in merger and acquisition that can be modeled as a normal form game.\todo{add ref e aggiustare}
@@ -49,18 +48,18 @@ We stated that the objective of absolute loss minimization is hopeless in an adv
 Take $\mathcal D$ as a space of binary outcomes, \emph{i.e.} $|\mathcal D|=2$ absolute loss as $f(x,y)=|x - y|$. Since the adversary plays after the learner $\mathcal A$, it can  make the loss of the learner $L_T=T$ by outputting the bit non predicted by the learner. Notice that no assumption has been made on the strategy followed by the learner $\mathcal A$.
 From this example it is clear that the learner has to set a less ambitious goal.
 
-We do so by extending the theoretical formulation in Section \ref{sec:OnlineLearning} by including a set $\mathcal E$ of other players, this setting is called "prediction with expert advice". At each time step of the prediction game, each expert $E_i\in\mathcal E$, predicts an element $x_{t,i}\in\mathcal D$, and incurs in a loss $f(x_{t,i},y_t)$, just as the agent $\mathcal A$, creating a general multi-agent interaction as in Figure \ref{fig:OL}.
+We do so by extending the theoretical formulation in Section \ref{sec:OnlineLearning} by including a set $\mathcal E$ of other players, this setting is called "prediction with expert advice". At each time step of the prediction game, each expert $e\in\mathcal E$, predicts an element $x_{t,e}\in\mathcal D$, and incurs in a loss $f(x_{t,e},y_t)$, just as the agent $\mathcal A$, creating a general multi-agent interaction as in Figure \ref{fig:OL}.
 Now the goal that the learner sets itself to solve is to obtain small losses with respect to the expert class $\mathcal E$. This concept is captured by the definition of regret.
-Formally we define the regret $y_{T,i}$ for the agent $\mathcal A$ with respect to expert $E_i\in\mathcal E$ (assumed finite for the moment) as follows:
+Formally we define the regret $R_{T,e}$ for the agent $\mathcal A$ with respect to expert $e\in\mathcal E$ (assumed finite for the moment) as follows:
 
 \begin{equation}\label{def:Regret}
-	y_{T,i} = L_T-L_{T,i}
+	R_{T,e} = L_T-L_{T,e}
 \end{equation}
 
 The regret observed by the agent $\mathcal A$ with respect to the entire class of experts $\mathcal E$ is defined as:
 
 \begin{equation}
-	y_T=\max\limits_{E_i\in\mathcal E}y_{T,i}=L_T-\min\limits_{E_i\in\mathcal E}L_{T,i}
+	R_T=\max\limits_{e\in\mathcal E}R_{T,e}=L_T-\min\limits_{e\in\mathcal E}L_{T,e}
 \end{equation}
 
 The task the agent $\mathcal A$ is set to solve is to find a sequence $x_t$ function of the information obtained up to the time $t$ in order to obtain small regret $y_T$ with respect to any sequence $y_1,y_2,\ldots$ chose by the environment.
@@ -76,9 +75,9 @@ where $ o(T)$ is the space of sub-linear affine functions. A strategy $\mathcal 
 The regret is a measure of the distance between our online performance and the best offline (in retrospect) performance among the expert class $\mathcal E$, this is also called \emph{external regret} since it is compared to the external set of experts $\mathcal E$. A surprising fact is even that such algorithms do even exist.
 In fact a first result is that in general there are no Hannan Consistent strategies, and just introducing the concept of regret is not enough for successful Online Learning: 
 
-A first simple counterexample can be found in~\cite{cover1966behavior}. If the decision space $\mathcal D$ is finite then there exists a sequence of loss function such that $y_T=\Omega(T)$.
+A first simple counterexample can be found in~\cite{cover1966behavior}. If the decision space $\mathcal D$ is finite then there exists a sequence of loss function such that $R_T=\Omega(T)$.
 % Cover Impossibility
-Again take $\mathcal D$ as a space of binary outcomes, absolute loss as $f(x,y)=|x - y|$, and the class of experts is composed by two experts, one predicting always $0$ and the other always $1$. Taking $T$ odd, we have that the loss of the best expert is $L_{T,i}<\frac{T}{2}$, and we have already shown that the adversary can make the loss of the learner $L_T=T$. It is now evident that the regret is $y_T>T-\frac{T}{2}$, which do not allow $y_T/T\to 0$. This argument is easily extended in the case of any finite decision space $\mathcal D$.
+Again take $\mathcal D$ as a space of binary outcomes, absolute loss as $f(x,y)=|x - y|$, and the class of experts is composed by two experts, one predicting always $0$ and the other always $1$. Taking $T$ odd, we have that the loss of the best expert is $L_{T,e}<\frac{T}{2}$, and we have already shown that the adversary can make the loss of the learner $L_T=T$. It is now evident that the regret is $R_T>T-\frac{T}{2}$, which do not allow $R_T/T\to 0$. This argument is easily extended in the case of any finite decision space $\mathcal D$.
 
 In order for the learner to hope to obtain sub-linear regret is to randomize its predictions, the learner, at each turn $t$, holds a probability distribution on the decision space and plays $x_t$ according to this distribution. If the original decision space was $\mathcal D$ with $|\mathcal D|=N$ after the randomization of the decision, we effectively transformed the decision space $\mathcal D$ into the $\Delta_{N-1}\in\mathbb R^{N}$ probability simplex. By doing so we are formally extending the game into its mixed extension, as will be discussed further in Section \ref{sec:GT}. It can be viewed also as a \emph{covexification} of the domain, pointing to the undeniably necessity of convex geometry in this context, that will be discussed in \ref{sec:OCO}. Therefore from now on the domain $\mathcal D$ will be convex, either by the problem specification or by randomized convexification if the problem has discrete decision space.
 
@@ -125,15 +124,15 @@ Also note that fixing the structure for the weights as in Equation \eqref{eq:pot
 \end{definition}
 
 It can be shown \todo{e allora show} that the algorithm defined by update rule \eqref{eq:ewf}, and for a convex loss function $f(\cdot,y_y)$, gives the following guarantee on the regret:
-$$y_T\le \frac{log(N)}{\eta}+\frac{T\eta}{8}$$
+$$R_T\le \frac{log(N)}{\eta}+\frac{T\eta}{8}$$
 
-By choosing $\eta=O\left(\sqrt\frac{1}{T}\right)$ we obtain a sub-linear regret $y_T=\mathcal O(\sqrt T)$. %It is also possible to make this algorithm an all-time algorithm (no need to know the length of the game $T$, as opposed as a \emph{one-time} algorithm) by using the so called doubling trick by continually adapting the parameter $\eta$. In general a one-time algorithm obtains slightly smaller bounds then the all-time counterparts, that require the knowledge
+By choosing $\eta=O\left(\sqrt\frac{1}{T}\right)$ we obtain a sub-linear regret $R_T=\mathcal O(\sqrt T)$. %It is also possible to make this algorithm an all-time algorithm (no need to know the length of the game $T$, as opposed as a \emph{one-time} algorithm) by using the so called doubling trick by continually adapting the parameter $\eta$. In general a one-time algorithm obtains slightly smaller bounds then the all-time counterparts, that require the knowledge
 
 
 
 \subsection{Experts}
 The theoretical framework described in Section \ref{sec:OnlineLearning} is very general and most suited for a game theory analysis of the problem. This help us describe many other frameworks, such as Online Optimization, or Multi Armed Bandit (MAB) as embedded into a Game Playing framework with expert advice. It can then be specialized by fixing many elements of the definition, in order to be applied to the specific problem we are set to solve.
-For example the class of experts $\mathcal E$ is most of the time completely fictitious, meaning that the experts are not real players of the game, but most of the time they are \emph{simulable} meaning that the agent $\mathcal A$ is able to compute $x_{t,E_i}$ for each expert $E_i\in\mathcal E$ and most of the times the class of expert is very limited in its actions, \emph{e.g.} $\mathcal E$ is the class of experts for which $x_{t,E_i}$ is constant in $t$. In this case, which is the most studied class of experts, we are basically just comparing our learner $\mathcal A$ to the best fixed action $x_t^*$ in hindsight. This is a clairvoyant strategy that attains the minimum cumulative loss over the entire length of the game $T$.
+For example the class of experts $\mathcal E$ is most of the time completely fictitious, meaning that the experts are not real players of the game, but most of the time they are \emph{simulable} meaning that the agent $\mathcal A$ is able to compute $x_{t,e}$ for each expert $e\in\mathcal E$ and most of the times the class of expert is very limited in its actions, \emph{e.g.} $\mathcal E$ is the class of experts for which $x_{t,e}$ is constant in $t$. In this case, which is the most studied class of experts, we are basically just comparing our learner $\mathcal A$ to the best fixed action $x^*$ in hindsight. This is a clairvoyant strategy that attains the minimum cumulative loss over the entire length of the game $T$.
 
 \subsection{Uncountable Experts}\label{sec:uncountable_exp}
 
@@ -141,7 +140,7 @@ In the case of uncountable experts the Exponentially Averaged Prediction cannot 
 With continuous class of experts $\mathcal E$ defined in this way, the regret definition is extended to 
 
 \begin{equation}
-    y_T = \sup\limits_{q\in\Delta_{N-1}}y_{T,q}:=L_T-\inf\limits_{q\in\Delta_{N-1}}L_{T,q},
+    R_T = \sup\limits_{q\in\Delta_{N-1}}R_{T,q}:=L_T-\inf\limits_{q\in\Delta_{N-1}}L_{T,q},
 \end{equation}
 
 
@@ -173,13 +172,13 @@ where $\Phi(x)=\varphi\left(\sum\limits_{i=1}^N\phi(x_i)\right)$ is chosen as $\
     \begin{equation}\label{eq:conc_exp_last}
         \sum\limits_{i=1}^N e^{\nu y_{t-1,i}}e^{\nu [f(x_t,y_t)-f(x_{t,i},y_t)]}\le \sum\limits_{i=1}^N e^{\nu y_{t-1,i}}
     \end{equation}
-    Applying $\varphi(x)=\frac{1}{\nu}log(x)$ to both sides of equation \eqref{eq:conc_exp_last} we obtain that $$\Phi(\mathbf y_{t})\le \Phi(\mathbf y_{t-1})$$ that prove the thesis.
+    Applying $\varphi(x)=\frac{1}{\nu}log(x)$ to both sides of equation \eqref{eq:conc_exp_last} we obtain that $$\Phi(\mathbf R_{t})\le \Phi(\mathbf R_{t-1})$$ that prove the thesis.
 \end{proof}
 
 The case of exp concave functions is very special, since we can obtain Theorem~\ref{th:General_Blk} that can be used to prove regret bounds very easily:
 
-\begin{equation}
-    y_T\le \frac{1}{\eta}\log\left(\sum\limits_{i=1}^N e^{\nu y_T,j}\right)=\Phi(\mathbf y_T)\le\Phi(\mathbf y_0) = \frac{log N}{\eta}
+\begin{equation}\label{eq:regret_exp_finite}
+    R_T\le \frac{1}{\eta}\log\left(\sum\limits_{i=1}^N e^{\nu R_T,j}\right)=\Phi(\mathbf R_T)\le\Phi(\mathbf R_0) = \frac{log N}{\eta}
 \end{equation}
 
 The case of exp-concave losses is also useful for the case of uncountable experts sketched in Section~\ref{sec:uncountable_exp}. This formulation will be of central importance for the portfolio optimization problem.
@@ -192,12 +191,12 @@ It is natural to extend the Exponential Weighted Majority algorithm described by
 
 \begin{theorem}(Mixture forecaster for exp-concave losses).
     Choosing $w_{q,t-1}=exp\left\{-\eta\sum\limits_{s=1}^{t-1}f(\langle q,x_{t,e}\rangle,y_s)\right\}$ in Equation \eqref{eq:mixture}, for a bounded $\nu$-exp concave loss function $f(\cdot,y)$, we obtain
-    $$y_T\le N\nu\left(log\left(\frac{\nu T}{N}\right)+1\right)$$
+    $$R_T\le N\nu\left(log\left(\frac{\nu T}{N}\right)+1\right)$$
 \end{theorem}
 
 % REGRET MINIMIZATION IN GAMES =================================================
 \section{Regret Minimization in Games}
-\label{sec:GT}\todo{Forse da togliere}
+\label{sec:GT}\todo{Forse da togliere tutto questo subchpt}
 In this section we explore the connection of the framework of Section \ref{sec:OnlineLearning} into a more classical repeated game framework. For the moment we thought at the adversary as a black box without any specific model in mind. The reason of this chapter is to clarify its role as a player in the game and to show the game theoretical properties of Hannan-consistent agents. Since in Online Learning the convention is to speak about losses, we shall speak about losses (minimization) also in the classical definitions of game theory instead of payoffs (maximization).
 
 \begin{definition}(Strategic Form $K$-Player Game).\label{def:Game}
@@ -289,7 +288,7 @@ The decision space $\mathcal D$ is assumed to be convex, as the functions $f_t:\
 Convexity plays an central role in most of the analysis made in Online Learning, and Online Convex Optimization. Convexity of the domain $\mathcal D$ and of the loss functions, $f(\cdot,r)$ bound the problem geometry and let us derive simple and efficient learning procedures. More generally in the subsequent section we will present the general learning 
 
 \subsection{Statistical Learning and Online Learning}
-\todo{cita che fa figo}
+\todo{cita}
 Now we explore the connection between the Online Optimization framework and classical concepts of classical Statistical Learning techniques. More concretely we can prove and design a whole class of algorithm that are Agnostically PAC Learnable with Online Learning Techniques.
 Classical statistical learning theory deals with examples (or observations) and models of the phenomena. Then it uses the model to predict the future observations~\cite{bousquet2003introduction}. Quite informally on could say that we are trying to infer concept from examples. A concept is a map $\mathcal C:\mathcal X\to\mathcal Y$, where $X$ is the domain space and $\mathcal Y$ is the set of labels for the examples. We then observe a sample from an unknown distribution $\mathcal D$ such that $(x,y)\sim \mathcal D$. What we need to achieve is to learn a mapping $y:\mathcal X\to\mathcal Y$ such that the error under the distribution $\mathcal D$ is small. The loss function needed to define this error is not specific to the problem and can be decided by the user, this is called generalization error and, for a loss function $l:\mathcal Y\times\mathcal Y \to\mathbb R$, it is defined as:
 \begin{equation}\label{eq:generalization}

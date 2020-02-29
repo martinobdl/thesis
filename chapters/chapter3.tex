@@ -1,6 +1,6 @@
 \chapter{Information, Prediction and Investing}
 
-In Chapter \ref{ch:OnlineLearning} we described at a high level the framework of Online Learning in Adversarial environment. Now we draw the connections between that and predictions. It surly seems counter intuitive to speak about predictions in an adversarial framework, since we are used to think about predictions only of stochastic processes. The root of this formulation are to be traced back to the Bell Laboratories in the '50, from works of Kelly \cite{kelly2011new}, linking sequential betting and information rate. This connection is of primary importance to understand sequential investing as an instance of sequential decision problem.
+In Chapter \ref{ch:OnlineLearning} we described at a high level the framework of Online Learning in Adversarial environment. Now we draw its connections with predictions and investments. It surly seems counter intuitive to speak about predictions in an adversarial framework, since we are used to think about predictions only of stochastic processes, but the way to think about predictions in adversarial environments is to think about probability assignment and empirical frequencies. The root of this formulation are to be traced back to the Bell Laboratories in the '50, from works of Kelly \cite{kelly2011new}, linking sequential betting and concept from information theory~\cite{cover2012elements}. This connection is of primary importance to understand sequential investing as an instance of sequential decision problem.
 We first draw the parallelism between probability assignment over discrete events and Online Learning and then extend the discussion to sequential investments.
 
 \section{Probability assignment}
@@ -8,11 +8,66 @@ The decision space $\mathcal D$ in the case of finite $N$ possible bets is the $
 
 \begin{definition}(Self Information Loss).
     In the sequential probability assignment problem the loss function $f(x,y)$, $x\in \Delta_{N-1}$ and $y\in[1,\ldots,N]$ is defined as
-    $$f(x,y)=-\log(x_y)$$
-where $x_y$ is the probability assigned to outcome $y\in\mathcal Y$.
+    $$f(x,y)=-\log\left(x^{(y)}\right)$$
+where $x^{(y)}$ is the probability assigned to outcome $y\in\mathcal Y$.
 \end{definition}
 
-In the case of simulable experts, the prediction $x_t$ of the agent is a function of the history of outcomes $y^{t-1}:=\{y_1,y_2,\ldots,y_{t-1}\}\in\mathcal Y^{t-1}$. An expert can be thought of as a set of functions $g_k:\mathcal Y^{k-1}\to\Delta_{N-1}$.
+In the case of simulable experts, the prediction $x_t$ of the agent is a function of the history of outcomes $y^{t-1}:=\{y_1,y_2,\ldots,y_{t-1}\}$.
 
+The cumulative loss for the agent $\mathcal A$ is then given by 
 
+\begin{equation}
+L_T=\prod\limits_{t=1}^T f(x_t,y_t)
+\end{equation}
+
+and can be interpreted as the log liklyhood assigned to the outcome sequence $y^T$ since 
+\begin{equation}\label{eq:loss_log}
+L_T=\sum\limits_{t=1}^Tf(x_t,y_t)=-\log\left(\prod\limits_{t=1}^Tx_t^{(y_t)}\right)
+\end{equation}
+
+where we can interpret $\prod\limits_{t=1}^Tx^{(y_t)}$ as the probability assigned to the entire outcome sequence $y^T$. This is already very similar to the compression-entropy rate one encounters in a classical lossless encoder, such as the arithmetic encoder~\cite{langdon1984introduction}. We will explore the connections to information theory later on in the chapter. \todo{ref esatta al ch}
+
+Similarly we can define the loss for an expert $e\in\mathcal E$ as 
+
+\begin{equation}
+L_{T,e}=\sum\limits_{t=1}^Tf(x_{t,e},y_t)=-\log\left(\prod\limits_{t=1}^Tx_{t,e}^{(y_t)}\right)
+\end{equation}
+
+and the regret for each expert $e\in\mathcal E$ is defined as 
+\begin{equation}
+R_{T,e}=L_T-L_{T,e}=\log\left(\prod\limits_{t=1}^Tx_{t,e}^{(y_t)}/\prod\limits_{t=1}^Tx_t^{(y_t)}\right)
+\end{equation}
+
+and the regret w.r.t. a generic class $\mathcal E$ of experts is defined as 
+
+\begin{equation}
+R_{T}=\sup\limits_{e\in\mathcal E}\log\left(\prod\limits_{t=1}^Tx_{t,e}^{(y_t)}/\prod\limits_{t=1}^Tx_t^{(y_t)}\right)
+\end{equation}
+
+where the class of experts $\mathcal E$ can be finite or uncountable.
+
+\subsection{Connection to Information Theory} 
+
+The link between sequential predictions and information theory has been observed in \cite{kelly2011new}, and connects the concept of sequential betting (or predictions) and entropy.
+
+Kelly put himself in a setting where the bettor has to predict the outcomes of binary events, given private information from an \emph{information channel} prone to errors, the binary events pays double for a correct prediction and zero for an incorrect one. The input bits of the information channel are the correct outcomes of the binary sequential event, but they reach the end of the private channel with probability $p$ of being correct and $q=1-p$ of being wrong. Clearly the optimal strategy with $p=1$ is to bet everything on each turn reaching a final wealth of $V_T=2^T$. In case $p<1$ it is not clear which strategy is the best to follow, this is clearly related and still under philosophical debate as the St. Petersburg paradox \cite{samuelson1977st}. Kelly propose to maximize the grow rate of the wealth., by investing a constant fraction of the current wealth. The growth rate of the wealth is defined as 
+$$G=\lim\limits_{T\to+\infty}\frac{1}{T}\log_2(V_T)$$
+
+Calling $l\in[0,1]$ the fraction of the wealth invested in the bet we have a capital after $T$ turns of 
+$$V_T=(1+l)^{W}(1-l)^{T-W}$$ 
+
+and the associated growth rate is 
+$$G=p\log_2(1+l)+q\log_2(1-l)$$
+
+which is maximized for $f=p-q$ giving $G_{\max}=1+p\log_2(p)+q\log_2(q)$ which is the rate of transmission for the communication channel, \emph{i.e.} the number of bits transferred for unite of time. This is the trivial case and can be extended to arbitrary odds and number of bets.
+
+The equivalent formulation in Online Learning can be obtained by observing that $\mathcal D=\Delta_0$ and that we are betting a fraction $l$ on the event being $0$ and a fraction $1-l$ on the the outcome being $1$. In that case the wealth at time $T$ will be $V_T=V_{T-1}l^{\mathbb I_{y_T=0}}(1-l)^{\mathbb I_{y_T=1}}$ and hence 
+
+\begin{equation}
+log(V_T)=\sum\limits_{t=1}^T\log(l\mathbb I_{y_t=0}+(1-l)\mathbb I_{y_t=1})
+\end{equation}
+
+which is equivalent to defining the cumulative loss 
+$$L_T=-log(V_T)=\sum\limits_{t=1}^T-\log(l\mathbb I_{y_t=0}+(1-l)\mathbb I_{y_t=1})$$
+which is equivalent to the loss defined in Equation \eqref{eq:loss_log}. We saw that in this formulation we can obtain regret $R_T=$
 
