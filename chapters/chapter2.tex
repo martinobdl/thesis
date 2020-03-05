@@ -98,7 +98,7 @@ Then it is natural to assume that the weights are a function of the cumulated re
 We can generalize the simple weighted average prediction \eqref{def:weighted_avg} in the following general form, introduced in~\cite{cesa2003potential}:
 
 \begin{equation}\label{eq:potential_avg}
-	x_t = \frac{\sum\limits_{i=1}^{N}\partial_i \Phi(\mathbf y_{t-1}) x_{t,i}}{\sum\limits_{i=1}^{N}\partial_i \Phi(\mathbf y_{t-1}) },
+x_t = \frac{\sum\limits_{i=1}^{N}\partial_i \Phi(\mathbf R_{t-1}) x_{t,i}}{\sum\limits_{i=1}^{N}\partial_i \Phi(\mathbf R_{t-1}) },
 \end{equation}
 
 where $\Phi(\mathbf u)=\varphi\left(\sum\limits_{i=1}^N\phi(u_i)\right)$ is a function $\Phi:\mathbb R^N\to\mathbb R^+$ defined through two increasing functions $\phi,\varphi:\mathbb R\to\mathbb R^+$, $\varphi,\phi\in\mathcal C^2(\mathbb R)$ and concave and convex, respectively and $\mathbf R_T=(R_{T,1},\ldots,R_{T,N})$.
@@ -192,7 +192,7 @@ It is natural to extend the Exponential Weighted Majority algorithm described by
     x_t=\frac{\int\limits_{\Delta_{N-1}} w_{q,t-1}\langle q,x_{t,e}\rangle dq}{\int\limits_{\Delta_{N-1}} w_{q,t-1}dq}
 \end{equation}
 
-\begin{theorem}(Mixture forecaster for exp-concave losses).
+\begin{theorem}(Mixture forecaster for exp-concave losses).\label{th:mixture_forecaster}
     Choosing $w_{q,t-1}=exp\left\{-\eta\sum\limits_{s=1}^{t-1}f(\langle q,x_{t,e}\rangle,y_s)\right\}$ in Equation \eqref{eq:mixture}, for a bounded $\nu$-exp concave loss function $f(\cdot,y)$, we obtain
     $$R_T\le N\nu\left(log\left(\frac{\nu T}{N}\right)+1\right)$$
 \end{theorem}
