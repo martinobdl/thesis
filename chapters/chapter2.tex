@@ -290,7 +290,62 @@ We showed that regardless of the strategy of player $2$, a player playing a Hann
 Let's compare this framework to an apparently unrelated problem, namely optimization, this will be the most suited framework to embed the Online Portfolio Optimization Problem. In online optimization an agent $\mathcal A$ is set to optimize a sequence of functions $f_t(x)$ where usually $f_t:\mathcal X\to \mathbb R$ is a real valued function from the set $\mathcal X\subset\mathbb R^n$. IN Online Convex Optimization literature, some times the loss functions are identified as $f(x,y_t)\equiv f_t(x)$.
 The decision space $\mathcal D$ is assumed to be convex, as the are the functions $f_t:\mathcal D\to \mathbb R$. This framework was first devised in \cite{zinkevich2003online}, and has been later wildly used in the machine learning community to engineer optimization procedures \cite{shalev2012online}. 
 
-Convexity plays an central role in most of the analysis made in Online Learning, and Online Convex Optimization. Convexity of the domain $\mathcal D$ and of the loss functions, $f(\cdot,r)$ bound the problem geometry and let us derive simple and efficient learning procedures. More generally in the subsequent section we will present the general learning 
+Convexity plays an central role in most of the analysis made in Online Learning, and Online Convex Optimization. Convexity of the domain $\mathcal D$ and of the loss functions, $f(\cdot,r)$ bound the problem geometry and let us derive simple and efficient learning procedures. More generally in the subsequent section we will present the general learning.
+
+\subsection{A General Algorithm for Online Convex Optimization}
+
+In this Section we will see an algorithm called \emph{Online Mirror Descent} (OMD), that generalizes many Online Convex Optimization algorithms. It is a first order method that works in the dual space defined by the choice of some regularizator \todo{regularizator?}. The OMD algorithm is genral and optimal in the sense that every Online Convex problem can be learned online nearly optimally with OMD, the precise formulation can be found in \cite{srebro2011universality}.
+
+OMD works with a class of regularitators called Bregman Divergences, \cite{banerjee2005clustering}.
+
+\begin{definition}(Bregman divergence). Given a differentiable convex function $\psi:\mathcal X\to\mathbb R$ the Bregman divergence is defined as an operator $d_{\psi}:\mathcal X\times\mathcal X\to \mathbb R^+$ defined for $x,y\in\mathcal X\times\mathcal X$ as 
+\begin{equation}\label{eq:bregman_div}
+d_\psi(x,y)=\psi(x)-\psi(y)-\langle x-y,\nabla \psi(y)\rangle
+\end{equation}
+\end{definition}
+
+Since $\psi$ is convex we have that $d_\psi(x,y)\ge0$, we can see that by linearization of $\psi(x)$ around $y\in\mathcal X$ and by the inequality on the non standard inner product defined by the hessian of the function $\psi$ which is positive thanks to the convexity. Since the operator defined in Equation \eqref{eq:bregman_div} is not symmetric in its arguments, it does not define an metric in the space $\mathcal X$.
+
+For $\psi(x)=||x||_2^2$ then $d_\psi(x,y)=||x-y||_2^2$. For $\psi(x)=\sum\limits_{i=1}^Nx_i\log(x_i)$ then $d_\psi(x,y)=\sum\limits_{i=1}^Nx_i\log(x_i/y_i)$, for $x,y\in\Delta_{N-1}\subset \mathbb R^N$ which is the well know Kullback–Leibler divergence~\cite{van2014renyi}.
+
+The OMD algorithm for Online Convex Optimization, uses the regularization given by a Bregman divergence to follow the best point in the convex set $\mathcal D$ up to now, but it is kept close to the current one by the divergence operator. Formally:
+
+\begin{definition}(Online Mirror Descent). OMD for a Bregamn Divergence induced by the differentiable, convex real values function $\psi$, and for a set of learning rates $\{\eta_0,\ldots,\eta_T\}$ has the following update rule: 
+$$x_{t+1} =\arg\min\limits_{x\in\mathcal X} d_\psi(x,x_t)+\eta_t\langle\nabla f_t(x_t),x-x_t\rangle,$$
+\end{definition}
+
+Next we will show the idea for a general bound for the OMD algorithm, this is to show the geometric ideas behind the OMD algorithm. It is important to point that the analysis can be refined by fixing the loss function $f_t$ or the convex function $\psi$.
+
+The convex function $\psi$ is assumed to be differentiable in the domain $\mathcal X$, but it is not required by the analysis, and in general we can work with subgradients rather than gradients. \todo{chiarire o togliere completamente}  
+
+\begin{theorem}\label{th:OMD_first_th}
+Let $d_\psi:\mathcal X\times\mathcal X\to \mathbb R$ the Bregman divergence associated to the convex smooth function $\psi$. Moreover, assume $d_\psi$ is $\alpha$-strong convex, \emph{i.e.} $d_\psi(x,y)\ge\frac{\alpha}{2}||x-y||^2$.
+Then $\forall x\in\mathcal X$ we have 
+$$\eta_t (f_t(x_t)-f_t(x))\le d_\psi(x,x_t)-d_\psi(x,x_{t+1})+\frac{\eta_t^2}{2}||\nabla f_t(x_t)||_*^2$$ 
+\end{theorem}
+\todo{proof or not?}
+
+Theorem \ref{th:OMD_first_th} can be used to prove a regret bound for the general OMD algorithm. 
+
+\begin{theorem}(Regret Bound for Online Mirror Descent).
+\end{theorem}
+
+
+
+
+% \begin{algorithm}[t!]
+%     \caption{OGD in OPO with Transaction Costs}
+%     \label{alg:OGD_in_OPO}
+%     \begin{algorithmic}[1]
+%     \REQUIRE learning rate sequence $\{\eta_1, \ldots, \eta_T\}$  \nonumber
+%     \STATE Set $\mathbf{x}_1 \gets \frac{1}{M} \mathbf{1}$ \label{line:init}
+%     \FOR {$t \in \{ 1, \ldots, T \}$}
+%     \STATE Select portfolio $\mathbf{x}_{t+1} \gets \Pi_{\Delta_{M-1}}\left(\mathbf{x}_{t}+ \eta_t \frac{\mathbf{r}_t}{\langle \mathbf{r}_t,\mathbf{x}_t \rangle}\right)$ \label{line:update}
+%     \STATE Observe $\mathbf{r}_{t+1}$ from the market \label{line:out}
+%     \STATE Get wealth $\log( \langle \mathbf{r}_{t+1},\mathbf{x}_{t+1} \rangle) - \gamma|| \mathbf{x}_{t+1} - \mathbf{x}_{t} ||_1$ \label{line:wealth}
+%     \ENDFOR
+%     \end{algorithmic}
+% \end{algorithm}
 
 \subsection{Statistical Learning and Online Learning}
 \todo{cita}
