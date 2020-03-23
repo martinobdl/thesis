@@ -1,4 +1,4 @@
-\chapter{Information, Prediction and Investing}
+\chapter{Information, Prediction and Investing}\label{ch:OPO}
 
 In Chapter \ref{ch:OnlineLearning} we described at a high level the framework for Online Learning in Adversarial environment. Now we draw its connections with predictions and investments. It surely seems counter-intuitive to speak about predictions in an adversarial framework, since we are used to think about predictions only of stochastic processes, but the way to think about predictions in adversarial environments is to think about probability assignment and empirical frequencies. The roots of this formulation are to be traced back to the Bell Laboratories in the '50s, from works of Kelly \cite{kelly2011new}, linking sequential betting and concept from information theory~\cite{cover2012elements}. This connection is of paramount importance to understand sequential investing as an instance of sequential decision problem.
 We will first draw the parallelism between probability assignment over discrete events and Online Learning, and then extend the discussion to sequential investments.
@@ -8,22 +8,22 @@ In this section we will draw the parallelism between assigning probabilities to 
 In the case of $N$ possible bets the decision space $\mathcal D$ is the $\Delta_{N-1}\subset \mathbb R^{N}$ probability simplex while the outcome $\mathcal Y$ space is the set $\{1,\ldots,N\}$, representing the winning bet at each turn. The loss function $f(x,y)$ should have these natural properties: low when $x_y\approx1$ and high when $x_y\approx0$, where $x_y$ is the probability assigned to the outcome $y$. The inverse log-likelihood seems a reasonable proposal, not only because of the multiplicative additive property of the logarithm, but has also a deeper connection to information that we will discuss later on\todo{è un po vago}:
 
 \begin{definition}(Self Information Loss).\label{def:log_loss}
-    In the sequential probability assignment problem the loss function $f(x,y)$, $x\in \Delta_{N-1}$ and $y\in[1,\ldots,N]$ is defined as
-    $$f(x,y)=-\log\left(x^{(y)}\right)$$
+    In the sequential probability assignment problem the loss function $f(\mathbf x,y)$, $\mathbf x\in \Delta_{N-1}$ and $y\in[1,\ldots,N]$ is defined as
+    $$f(\mathbf x,y)=-\log\left(x^{(y)}\right),$$
 where $x^{(y)}$ is the probability assigned to outcome $y\in\mathcal Y$.
 \end{definition}
 
-In the case of simulable experts, the prediction $x_t$ of the agent is a function of the history of outcomes $y^{t-1}:=\{y_1,y_2,\ldots,y_{t-1}\}$.
+In the case of simulable experts, the prediction $\mathbf x_t$ of the agent is a function of the history of outcomes $y^{t-1}:=\{y_1,y_2,\ldots,y_{t-1}\}$.
 
 The cumulative loss for the agent $\mathcal A$ is then given by 
 
 \begin{equation}
-L_T=\prod\limits_{t=1}^T f(x_t,y_t)
+L_T=\prod\limits_{t=1}^T f(\mathbf x_t,y_t),
 \end{equation}
 
 and can be interpreted as the log-likelihood assigned to the outcome sequence $y^T$ since 
 \begin{equation}\label{eq:loss_log}
-L_T=\sum\limits_{t=1}^Tf(x_t,y_t)=-\log\left(\prod\limits_{t=1}^Tx_t^{(y_t)}\right)
+L_T=\sum\limits_{t=1}^Tf(\mathbf x_t,y_t)=-\log\left(\prod\limits_{t=1}^T x_t^{(y_t)}\right),
 \end{equation}
 
 where we can interpret $\prod\limits_{t=1}^Tx^{(y_t)}$ as the probability assigned to the entire outcome sequence $y^T$. This is already very similar to the compression-entropy rate one encounters in a classical lossless encoder, such as the arithmetic encoder~\cite{langdon1984introduction}. We will explore the connections to information theory later on in the chapter. \todo{ref esatta al ch}
@@ -31,12 +31,12 @@ where we can interpret $\prod\limits_{t=1}^Tx^{(y_t)}$ as the probability assign
 Similarly we can define the loss for an expert $e\in\mathcal E$ as: 
 
 \begin{equation}
-L_{T,e}=\sum\limits_{t=1}^Tf(x_{t,e},y_t)=-\log\left(\prod\limits_{t=1}^Tx_{t,e}^{(y_t)}\right)
+L_{e,T}=\sum\limits_{t=1}^Tf(\mathbf x_{e,t},y_t)=-\log\left(\prod\limits_{t=1}^Tx_{e,t}^{(y_t)}\right),
 \end{equation}
 
 and the regret for each expert $e\in\mathcal E$ is defined as 
 \begin{equation}
-R_{T,e}=L_T-L_{T,e}=\log\left(\prod\limits_{t=1}^Tx_{t,e}^{(y_t)}\bigg/\prod\limits_{t=1}^Tx_t^{(y_t)}\right)
+R_{e,T}=L_T-L_{e,T}=\log\left(\prod\limits_{t=1}^Tx_{t,e}^{(y_t)}\bigg/\prod\limits_{t=1}^Tx_t^{(y_t)}\right),
 \end{equation}
 
 and the regret w.r.t. a generic class $\mathcal E$ of experts is defined as: 
@@ -62,23 +62,23 @@ and it is called Laplace Mixture Forecaster \cite{weinberger1994optimal}. The im
 The link between sequential predictions and information theory has been observed in \cite{kelly2011new}, and connects the concept of sequential betting (or predictions) and entropy.
 
 Kelly put himself in a setting where the bettor has to predict the outcomes of binary events, given private information from an \emph{information channel} prone to errors. The binary bet pays double for a correct prediction and zero for an incorrect one. The input bits of the information channel are the correct outcomes of the binary sequential event, but they reach the end of the private channel with probability $p$ of being correct and $q=1-p$ of being wrong. Clearly the optimal strategy with $p=1$ is to bet everything on each turn reaching a final wealth, after $T$ rounds, of $V_T=2^T$. In case $p<1$ it is not clear which strategy is the best to follow, this is clearly related and still under philosophical debate as the St. Petersburg paradox \cite{samuelson1977st}. Kelly proposed to maximize the grow rate of the wealth by investing a constant fraction of the current wealth. The growth rate $G$ of the wealth $V_T$ is defined as 
-$$G=\lim\limits_{T\to+\infty}\frac{1}{T}\log_2(V_T)$$
+$$G=\lim\limits_{T\to+\infty}\frac{1}{T}\log_2(V_T).$$
 
 Calling $l\in[0,1]$ the fraction of the wealth invested in the bet we have a capital after $T$ rounds of 
-$$V_T=(1+l)^{W}(1-l)^{T-W}$$ 
+$$V_T=(1+l)^{W}(1-l)^{T-W},$$ 
 
-and the associated growth rate is 
-$$G=p\log_2(1+l)+q\log_2(1-l)$$
+and the associated growth rate becomes: 
+$$G=p\log_2(1+l)+q\log_2(1-l),$$
 
 which is maximized for $l=p-q$ giving $G_{\max}=1+p\log_2(p)+q\log_2(q)$ which is the rate of transmission for the communication channel, \emph{i.e.} the number of bits transferred for unit of time. This is the trivial case and can be extended to arbitrary odds and number of bets.
 
 The equivalent formulation in Online Learning can be obtained by observing that $\mathcal D=\Delta_0$ and that we are betting a fraction $l_t$ on the event being $0$ and a fraction $1-l_t$ on the the outcome being $1$. In that case the wealth at time $t$ will be $V_t=V_{t-1}l_t^{1-y_t}(1-l_t)^{y_t}$ and hence: 
 
 \begin{equation}
-log(V_T)=\sum\limits_{t=1}^T\log(l_t(y_t-1)+(1-l_t)y_t)
+log(V_T)=\sum\limits_{t=1}^T\log(l_t(y_t-1)+(1-l_t)y_t),
 \end{equation}
 
-which is equivalent to defining the cumulative loss 
+which defines the cumulative loss 
 $$L_T=-log(V_T)=\sum\limits_{t=1}^T-\log(l_t(1-y_t)+(1-l_t)y_t)$$
 which is equivalent to the loss defined in Equation \eqref{eq:loss_log}.
 
@@ -99,7 +99,7 @@ $$L_T=-\log(V_T)=-\log(V_{T-1})-\log(\langle \mathbf x_t,\mathbf y_t\rangle),$$
 
 that implies 
 \begin{equation}\label{eq:log_loss_hr}
-L_T=\sum\limits_{t=1}^T-\log(\langle \mathbf x_t,\mathbf y_t\rangle)
+L_T=\sum\limits_{t=1}^T-\log(\langle \mathbf x_t,\mathbf y_t\rangle),
 \end{equation}
 
 we obtain exactly the same formulation presented at the beginning of the chapter. Moreover, we note that the regret $R_T$ does not 
@@ -113,17 +113,17 @@ A very similar formulation can be obtained for the case of sequential investment
 
 \section{From Horse Races to Online Portfolio Optimization}\label{sec:from_horse_to_ptf}
 
-We can formulate the portfolio allocation as a sequential betting problem. Let us imagine that there are no real life issues associated with trading costs and liquidity (they will be discussed in the following chapters \todo{agg ref}). Then the best strategy would be to invest at each round $t$ the entire capital on one single stock, knowing that will be the best performance stock at round $t$. But assuming an adversarial environment we have to randomize our allocation, or equivalently distribute our wealth accordingly to our randomization probabilities \todo{F:???} as in Equation \eqref{eq:log_loss_hr}. 
+We can formulate the portfolio allocation as a sequential betting problem. Let us imagine that there are no real life issues associated with trading costs and liquidity (they will be discussed in the following chapters \todo{agg ref}). Then the best strategy would be to invest at each round $t$ the entire capital on one single stock, knowing that will be the best performance stock at round $t$. But assuming an adversarial environment we have to randomize our allocation, or equivalently distribute our wealth accordingly to our randomization probabilities \todo{F:???} as they are equivalent under Equation \eqref{eq:log_loss_hr}. 
 
 \subsection{The Online Portfolio Optimization Model}
 
-The model consists in a sequential wealth allocation in $N\in\mathbb N$ stocks for discrete rounds $t\in\{1,\ldots,T\}$, where $T$ is the investment horizon. Note that the set of times is arbitrary, and could also be non-homogeneous, in practice in the Online Portfolio Optimization case, it is usually thought to be in days. The evolution of the stock $i\in 1,\ldots,N$ prices at time $t$, $P_{t,i}$, define the price relatives $r_{i,t}=\frac{P_{i,t+1}}{P_{i,t}}$, and we can define the price relative vector at time $t$ as $\mathbf r_t=(r_{1,t},\ldots,r_{N,t})\in\mathbb R^N$. 
+The model consists in a sequential wealth allocation in $N\in\mathbb N$ stocks for discrete rounds $t\in\{1,\ldots,T\}$, where $T$ is the investment horizon. Note that the set of times is arbitrary, and could also be non-homogeneous, in practice in the Online Portfolio Optimization case, it is usually thought to be in days. The evolution of the stock $i\in 1,\ldots,N$ prices at time $t$, $P_{t,i}$, define the price relatives $y_{i,t}=\frac{P_{i,t+1}}{P_{i,t}}$, and we can define the price relative vector at time $t$ as $\mathbf y_t=(y_{1,t},\ldots,y_{N,t})\in\mathbb R^N$. 
 
-An investor dividing, at round $t$, its wealth $W_t$ into a fraction $\mathbf x_t\in\Delta_{N-1}$ for each asset will get a wealth $W_{t+1}=W_t\langle \mathbf x_t,\mathbf r_t\rangle$ at round $t+1$. As in Section \ref{sec:Info} we can define the growth rate 
-$$G_T=\log(W_T)=\sum\limits_{t=1}^T\log(\langle\mathbf x_t, \mathbf r_t\rangle)$$
+An investor dividing, at round $t$, its wealth $W_t$ into a fraction $\mathbf x_t\in\Delta_{N-1}$ for each asset will get a wealth $W_{t+1}=W_t\langle \mathbf x_t,\mathbf y_t\rangle$ at round $t+1$. As in Section \ref{sec:Info} we can define the growth rate 
+$$G_T=\log(W_T)=\sum\limits_{t=1}^T\log(\langle\mathbf x_t, \mathbf y_t\rangle).$$
 
 As in the case of binary outcomes, \emph{i.e.} horse races, we can redefine the problem in an Online Learning framework, by defining the loss $f(\mathbf x,\mathbf y)=-\log(\langle\mathbf x_t, \mathbf y_t\rangle)$ and a cumulative loss as 
-$$L_T=-G_T=\sum\limits_{t=1}^T-\log(\langle\mathbf x_t,\mathbf y_t\rangle)$$
+$$L_T=-G_T=\sum\limits_{t=1}^T-\log(\langle\mathbf x_t,\mathbf y_t\rangle).$$
 
 Exactly as in the previous Section, the expert class is generated by the convex hull of the base class $\mathcal E_N$, composed by the experts always betting on the win of the same horse $i\in1,\ldots,N$, or, equivalently, allocating all the portfolio on the same asset, at every round. The convex hull of the class is the class of experts $\mathcal E$, so that at every turn $t$, the expert is allocating all the wealth in a specific element $\mathbf x\in\Delta_{N-1}$. In the Online Portfolio literature this class of allocations is called \emph{Constant Rebalancing Portfolio} (CRP), and we will define its wealth as $W_T(\mathbf x)=W_0\prod\limits_{t=1}^T\langle\mathbf x,\mathbf y_t\rangle$. \todo{cite}
 
@@ -131,11 +131,11 @@ As in every adversarial environment, we have to compare our losses with the best
 
 \begin{align}
 R_T&=L_T-\inf\limits_{e\in \mathcal E}L_{T,e}\\
-&=\sum\limits_{t=1}^T-\log(\langle\mathbf x_t,\mathbf y_t\rangle)-\inf\limits_{\mathbf x\in\Delta_{N-1}}\sum\limits_{t=1}^T-\log(\langle\mathbf x,\mathbf y_t\rangle)
+&=\sum\limits_{t=1}^T-\log(\langle\mathbf x_t,\mathbf y_t\rangle)-\inf\limits_{\mathbf x\in\Delta_{N-1}}\sum\limits_{t=1}^T-\log(\langle\mathbf x,\mathbf y_t\rangle).
 \end{align}
 
 The CRP attaining the minimum loss 
-$$\mathbf x^*=\inf\limits_{\mathbf x \in \Delta_{N-1}}\sum\limits_{t=1}^T-\log(\langle\mathbf x,\mathbf y_t\rangle)$$
+$$\mathbf x^*=\inf\limits_{\mathbf x \in \Delta_{N-1}}\sum\limits_{t=1}^T-\log(\langle\mathbf x,\mathbf y_t\rangle).$$
 is called \emph{Best Constant Rebablancing Portfolio} (BCRP).
 
 As we shall see in the next section, Constant Rebalancing Portfolios (CRP) are a very powerful class of strategies and being competitive (in terms of sublinear regret) with respect to this class assures good theoretical guarantees. \todo{aggiungiere algo (non necessario) per OPO }
@@ -143,95 +143,10 @@ As we shall see in the next section, Constant Rebalancing Portfolios (CRP) are a
 \subsection{Effectivness of Constant Rebablalancing Portfolios}\label{sec:OPO}
 
 The CRP is a strategy that each round $t$ redistributes its wealth into the same distribution $\mathbf x\in\Delta_{N-1}$. As we saw in the previous Section this strategies can be identified as the ones generated by expert class $\mathcal E$ defined previously.
-The Buy and Hold (BAH) is a strategies that buys an allocation at the start of the investment period and hold on to it to the end of the investment horizon $T$. The wealth of an BHA strategy can be written as $W_T=\langle\mathbf x, \prod_{t=1}^T \mathbf r_t\rangle$.
+The Buy and Hold (BAH) is a strategies that buys an allocation at the start of the investment period and hold on to it to the end of the investment horizon $T$. The wealth of an BHA strategy can be written as $W_T=\langle\mathbf x, \prod_{t=1}^T \mathbf y_t\rangle$.
 
 A simple example can illustrate the effectiveness of the CRP strategies, and the inherently difference that exists between the Modern Portfolio Theory and the Online Portfolio Optimization techniques.
-Imagine to have two stocks, and the adversary can choose the value of the price relatives in the set: $r_{1,t},r_{2,t}\in\left\{\frac{3}{5},\frac{8}{5}\right\}$. Imagine that the adversary picks a price relative in the set $\left\{\frac{3}{5},\frac{8}{5}\right\}$ with equal probability. Every BHA allocation is exponentially decaying $\mathbb E[W_T]=\langle \mathbf x, (\frac{24}{25},\frac{24}{25})\rangle=\frac{24}{25}$ and hence has decaying growth rate $G_T<0$. Conversely, the equally allocated CRP $\mathbf x=(\frac{1}{2},\frac{1}{2})$ has positive growth rate and exponentially increasing wealth: $\mathbb E[W_T]=(11/10)^T$ and $G_T=T\log(11/10)>0$.
+Imagine to have two stocks, and the adversary can choose the value of the price relatives in the set: $y_{1,t},y_{2,t}\in\left\{\frac{3}{5},\frac{8}{5}\right\}$. Imagine that the adversary picks a price relative in the set $\left\{\frac{3}{5},\frac{8}{5}\right\}$ with equal probability. Every BHA allocation is exponentially decaying $\mathbb E[W_T]=\langle \mathbf x, (\frac{24}{25},\frac{24}{25})\rangle=\frac{24}{25}$ and hence has decaying growth rate $G_T<0$. Conversely, the equally allocated CRP $\mathbf x=(\frac{1}{2},\frac{1}{2})$ has positive growth rate and exponentially increasing wealth: $\mathbb E[W_T]=(11/10)^T$ and $G_T=T\log(11/10)>0$.
 
 Historically, this example has been called Shannon Demon \cite{poundstone2010fortune} and being compared to the Maxwell's Demon since, as in the thermodynamics case, Shannon's Demon is generating wealth (energy in the case on Maxwell) from nothing since both stocks are martingales, and opposers to the Capital Growth Theory, used this argument to invalidate this ideas. In reality there is nothing strange about this example, and it is just one of the many techniques that exploits the existence of volatility and converts it into wealth, as theoretically does a delta-hedged option in the Black and Scholes model~\cite{black1973pricing}.
-
-\section{Transaction Costs}\label{sec:transaction_costs}
-
-Most of the works in the field of Online Portfolio Optimization usually are not taking into account the specific of the trading mechanism in their model. The most important aspect left out of the analysis is transaction costs. Including transaction costs into the Online Portfolio Optimization model in non-trivial and complex. The reason why transaction costs are more difficult to include into the model is that the inclusion of transaction costs do change significantly the loss function and, as we shall see, the theoretical guarantees of the algorithms do relay heavily on very strict conditions on the loss function, such as convexity and exp-concavity.
-
-Indeed an algorithm that guarantees sub-linear regret without transaction costs, is not guaranteed to have sub-linear regret in the more realistic scenario in which trading costs are included. 
-
-Very few works include transaction costs in the Online Porfolio Optimization model. 
-There exist a wide variety of heuristic methods that tried to overcome this problem~\cite{li2018transaction,yang2018reversion}, but they do not provide any guarantee on the regret in the presence of transaction costs. 
-To the best of our knowledge, there are only two studies that analyze total regret: U$_C$P~\cite{blum1999universal}, and Online Lazy Updates (OLU)~\cite{das2013online}. We will present the algorithm designed in these works in Chapter \ref{ch:algos}. The major contribution of this research is to give an algorithm that has sub-linear regret in the Online Portfolio Optimization problem with transaction costs.
-
-\subsection{Online Portfolio Optimization with Transaction Costs}
-
-Transaction costs are notably difficult to model or even define. In order to model them correctly trading costs, one would have to take into account many aspect of the trading mechanism and explore the mechanism of trading in its minutiae, this filed is called \emph{market microstructure}. Great starting references can be found in \cite{harris2003trading} and \cite{o1997market}. Our model of transaction costs is much simpler in order to recover regret bounds in the presence of trading costs.
-
-We will then perform some approximations and assumption in order to define a new concept of regret to be used in the framework of Online Portfolio Optimization. The final model for Online Portfolio Optimization with transaction costs that will be derived in this section, is the same of the one defined in \cite{das2013online}.
-
-Following the approach previously used in the OPO literature~\cite{blum1999universal}, we use an approximation of the real transaction costs, considering them proportional to the difference in portfolio allocation.
-Formally, the transaction costs at round $t$ are implicitly determined by the solution of the following equation:
-\todo{rephrase}
-
-\begin{align}\label{eq:real_tc_big}
-W_{t-1}&=\tilde W_{t-1}+\gamma_s\sum\limits_{i=1}^N\left(\frac{x_{i,t-1}y_{i,t-1}}{\langle \mathbf x_{t-1},\mathbf y_{t-1}\rangle}-x_{i,t}\tilde W_{t-1}\right)^+\\\nonumber
-&+\gamma_b\sum\limits_{i=1}^N\left(x_{i,t}\tilde W_{t-1}-\frac{x_{i,t-1}y_{i,t-1}}{\langle \mathbf x_{t-1},\mathbf y_{t-1}\rangle}\right)^+,
-\end{align}
-
-Where $\gamma_s,\gamma_b>0$ are the proportional transaction fees for selling and buying respectively, $W_{t-1}$ is the wealth before the trading costs are taken into account and $\tilde W_{t-1}$ is the wealth remaining after the trading costs. $(x)^+$ is defined as the positive part of $x$ as $(x)^+:=\max(x,0)$.
-This model for transaction costs is called \emph{proportional transaction costs}. \todo{add ref}
-
-If we assume that in Equation \eqref{eq:real_tc_big} we have $\gamma=\gamma_s=\gamma_b>0$ equal and fixed for buying ans selling and defining $\alpha_t:=\frac{\tilde W_{t-1}}{W_{t-1}}$ we can rewrite Equation \eqref{eq:real_tc_big} as:
-
-\begin{equation}\label{eq:real_tc}
-   \alpha_t = 1 - \gamma ||\mathbf{x}'_{t-1}-\mathbf{x}_t \alpha_{t} ||_1,
-\end{equation}
-
-\todo{$\alpha$ is already taken. But $\alpha_{123}$ is available.}
-
-$\mathbf{x'}_{t-1} = \frac{\mathbf{x}_{t-1} \otimes \mathbf{y}_{t-1} }{\langle \mathbf{x}_{t-1}, \mathbf{y}_{t-1} \rangle }$ is the portfolio composition after the market movement $\mathbf{y}_{t-1}$.  With $ \mathbf{a} \otimes \mathbf{b}$ we denote the element-wise product between the two vectors $\mathbf{a}$ and $\mathbf{b}$.
-\todo{rephrase}
-
-With this model, the wealth that takes into account transaction costs
-can be written as:
-
-\begin{equation} \label{eq:realwealth}
-    \tilde W_T = \prod\limits_{t=1}^T \alpha_t\langle \mathbf{x}_t, \mathbf{y}_t \rangle,
-\end{equation}
-
-where $\alpha_t$ is the solution of Equation \eqref{eq:real_tc}. We simplify further Equation \eqref{eq:real_tc} in order to avoid having to work with a non-linear equation. Indeed, if we assume that $\mathbf y_t$ are small we can assume $\mathbf x'_t\approx \mathbf x_t$ and $\alpha_t\mathbf x_t\approx\mathbf x_t$. Therefore the wealth remaining after the trading costs can be approximated by:
-
-\begin{equation}\label{eq:fake_tc}
-\alpha_t=1-\gamma||\mathbf x_t-\mathbf x_{t-1}||_1.
-\end{equation}
-
-We will now define a new concept of regret for the Online Portfolio Optimization, compared to the one originated from the log-loss of Section \ref{sec:from_horse_to_ptf}. 
-
-\begin{align}
-    \log(\tilde W_T)&=\log\left(\prod\limits_{t=1}^T  \langle \mathbf{x}_t, \mathbf{y}_t \alpha_t\rangle\right) \\ 
-    & = \log(W_T)+\log\left(\prod\limits_{t=1}^T \alpha_t\right) \\ 
-    & \approx \log(W_T) - \sum\limits_{t=1}^T\gamma||\mathbf{x}_t-\mathbf{x}_{t-1}||_1 \label{eq:expansion}
-\end{align}
-
-The approximation in \eqref{eq:expansion} is because $\gamma\ll1$ and $\log(1-x)\approx-x$.
-
-
-Note that by using Equation \eqref{eq:fake_tc} we have that the BCRP pays zero transaction costs, this observation justifies further the use of following definitions:
-
-\begin{definition}(Regret on the costs)\label{def:regret_on_the_costs}
-For the Online Portfolio Optimization with transaction costs problem we define 
-\begin{equation}
-C_T:=\gamma\sum\limits_{t=1}^T||\mathbf x_t-\mathbf x_{t-1}||_1,
-\end{equation}
-as the regret on the costs paid by a learner predicting the sequence $\mathbf x_1,\ldots,\mathbf x_T$ of portfolio vectors.
-\end{definition}
-
-Next we will introduce the concept of total regret.
-
-\begin{definition}(Total Regret)
-For the Online Portfolio Optimization with transaction costs problem we define 
-\begin{equation}
-R_T^C:=R_T+C_T
-\end{equation}
-where $R_T$ is defined as the log-loss regret introduced in Section \ref{sec:from_horse_to_ptf} and $C_T$ is the regret on the costs defined in Definition \ref{def:regret_on_the_costs}.
-\end{definition}
-
-
 
