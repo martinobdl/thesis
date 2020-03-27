@@ -5,7 +5,7 @@ We will first draw the parallelism between probability assignment over discrete 
 
 \section{Probability assignment}
 In this section we will draw the parallelism between assigning probabilities to outcomes, predictions, information theory and investments.  
-In the case of $N$ possible bets the decision space $\mathcal D$ is the $\Delta_{N-1}\subset \mathbb R^{N}$ probability simplex while the outcome $\mathcal Y$ space is the set $\{1,\ldots,N\}$, representing the winning bet at each turn. The loss function $f(x,y)$ should have these natural properties: low when $x_y\approx1$ and high when $x_y\approx0$, where $x_y$ is the probability assigned to the outcome $y$. The inverse log-likelihood seems a reasonable proposal, not only because of the multiplicative additive property of the logarithm, but has also a deeper connection to information that we will discuss later on\todo{è un po vago}:
+In the case of $N$ possible bets the decision space $\mathcal D$ is the $\Delta_{N-1}\subset \mathbb R^{N}$ probability simplex while the outcome $\mathcal Y$ space is the set $\{1,\ldots,N\}$, representing the winning bet at each turn. The loss function $f(x,y)$ should have these natural properties: low when $x_y\approx1$ and high when $x_y\approx0$, where $x_y$ is the probability assigned to the outcome $y$. The inverse log-likelihood seems a reasonable proposal, not only because of the multiplicative additive property of the logarithm, (we need the loss to be an additive quantity) but has also a deeper connection to information that we will discuss more formally in Section \ref{sec:Info}.
 
 \begin{definition}(Self Information Loss).\label{def:log_loss}
     In the sequential probability assignment problem the loss function $f(\mathbf x,y)$, $\mathbf x\in \Delta_{N-1}$ and $y\in[1,\ldots,N]$ is defined as
@@ -26,7 +26,7 @@ and can be interpreted as the log-likelihood assigned to the outcome sequence $y
 L_T=\sum\limits_{t=1}^Tf(\mathbf x_t,y_t)=-\log\left(\prod\limits_{t=1}^T x_t^{(y_t)}\right),
 \end{equation}
 
-where we can interpret $\prod\limits_{t=1}^Tx^{(y_t)}$ as the probability assigned to the entire outcome sequence $y^T$. This is already very similar to the compression-entropy rate one encounters in a classical lossless encoder, such as the arithmetic encoder~\cite{langdon1984introduction}. We will explore the connections to information theory later on in the chapter. \todo{ref esatta al ch}
+where we can interpret $\prod\limits_{t=1}^Tx^{(y_t)}$ as the probability assigned to the entire outcome sequence $y^T$. This is already very similar to the compression-entropy rate one encounters in a classical lossless encoder, such as the arithmetic encoder~\cite{langdon1984introduction}. We will explore the connections to information theory later on in Chapter \ref{sec:Info}.
 
 Similarly we can define the loss for an expert $e\in\mathcal E$ as: 
 
@@ -79,7 +79,7 @@ log(V_T)=\sum\limits_{t=1}^T\log(l_t(y_t-1)+(1-l_t)y_t),
 \end{equation}
 
 which defines the cumulative loss 
-$$L_T=-log(V_T)=\sum\limits_{t=1}^T-\log(l_t(1-y_t)+(1-l_t)y_t)$$
+$$L_T=-log(V_T)=\sum\limits_{t=1}^T-\log(l_t(1-y_t)+(1-l_t)y_t),$$
 which is equivalent to the loss defined in Equation \eqref{eq:loss_log}.
 
 By defining the growth rate at $T$ as $G_T=\frac{1}{T}\log_2(V_T)$ we can observe that $L_T=TG_T\log(2)$ and so a learner $\mathcal A$ that obtains sub-linear regret $R_T/T\to0$, where the expert class is composed of constant experts for which $l_t=const$, is equivalent to obtaining a growth rate $G_T\to G_{\max}$.
@@ -113,7 +113,7 @@ A very similar formulation can be obtained for the case of sequential investment
 
 \section{From Horse Races to Online Portfolio Optimization}\label{sec:from_horse_to_ptf}
 
-We can formulate the portfolio allocation as a sequential betting problem. Let us imagine that there are no real life issues associated with trading costs and liquidity (they will be discussed in the following chapters \todo{agg ref}). Then the best strategy would be to invest at each round $t$ the entire capital on one single stock, knowing that will be the best performance stock at round $t$. But assuming an adversarial environment we have to randomize our allocation, or equivalently distribute our wealth accordingly to our randomization probabilities \todo{F:???} as they are equivalent under Equation \eqref{eq:log_loss_hr}. 
+We can formulate the portfolio allocation as a sequential betting problem. Let us imagine that there are no real life issues associated with trading costs and liquidity (this issues will be discussed in the following Chapter \ref{ch:transaction_costs}). Then the best strategy would be to invest at each round $t$ the entire capital on one single stock, knowing that will be the best performance stock at round $t$. But assuming an adversarial environment we have to randomize our bet, or equivalently distribute our wealth into the $N$ horses accordingly to our randomization probabilities, as they are equivalent under Equation \eqref{eq:log_loss_hr}. 
 
 \subsection{The Online Portfolio Optimization Model}
 
@@ -125,7 +125,7 @@ $$G_T=\log(W_T)=\sum\limits_{t=1}^T\log(\langle\mathbf x_t, \mathbf y_t\rangle).
 As in the case of binary outcomes, \emph{i.e.} horse races, we can redefine the problem in an Online Learning framework, by defining the loss $f(\mathbf x,\mathbf y)=-\log(\langle\mathbf x_t, \mathbf y_t\rangle)$ and a cumulative loss as 
 $$L_T=-G_T=\sum\limits_{t=1}^T-\log(\langle\mathbf x_t,\mathbf y_t\rangle).$$
 
-Exactly as in the previous Section, the expert class is generated by the convex hull of the base class $\mathcal E_N$, composed by the experts always betting on the win of the same horse $i\in1,\ldots,N$, or, equivalently, allocating all the portfolio on the same asset, at every round. The convex hull of the class is the class of experts $\mathcal E$, so that at every turn $t$, the expert is allocating all the wealth in a specific element $\mathbf x\in\Delta_{N-1}$. In the Online Portfolio literature this class of allocations is called \emph{Constant Rebalancing Portfolio} (CRP), and we will define its wealth as $W_T(\mathbf x)=W_0\prod\limits_{t=1}^T\langle\mathbf x,\mathbf y_t\rangle$. \todo{cite}
+Exactly as in the previous Section, the expert class is generated by the convex hull of the base class $\mathcal E_N$, composed by the experts always betting on the win of the same horse $i\in1,\ldots,N$, or, equivalently, allocating all the portfolio on the same asset, at every round. The convex hull of the class is the class of experts $\mathcal E$, so that at every turn $t$, the expert is allocating all the wealth in a specific element $\mathbf x\in\Delta_{N-1}$. In the Online Portfolio literature this class of allocations is called \emph{Constant Rebalancing Portfolio} (CRP), and we will define its wealth as $W_T(\mathbf x)=W_0\prod\limits_{t=1}^T\langle\mathbf x,\mathbf y_t\rangle$.
 
 As in every adversarial environment, we have to compare our losses with the best expert in the expert class through the concept of regret:
 
@@ -138,7 +138,7 @@ The CRP attaining the minimum loss
 $$\mathbf x^*=\inf\limits_{\mathbf x \in \Delta_{N-1}}\sum\limits_{t=1}^T-\log(\langle\mathbf x,\mathbf y_t\rangle).$$
 is called \emph{Best Constant Rebablancing Portfolio} (BCRP).
 
-As we shall see in the next section, Constant Rebalancing Portfolios (CRP) are a very powerful class of strategies and being competitive (in terms of sublinear regret) with respect to this class assures good theoretical guarantees. \todo{aggiungiere algo (non necessario) per OPO }
+As we shall see in the next section, Constant Rebalancing Portfolios (CRP) are a very powerful class of strategies and being competitive (in terms of sublinear regret) with respect to this class assures good theoretical guarantees. 
 
 \subsection{Effectivness of Constant Rebablalancing Portfolios}\label{sec:OPO}
 

@@ -62,9 +62,12 @@
 
 \newtheorem{definition}{Definition}[section]
 \newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
 \newtheorem{assumption}{Assumption}
 \newtheorem{lemma}{Lemma}[section]
 \usepackage[draft]{todonotes}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\arginf}{arg\,inf}
 
 \begin{document}
 \include{chapters/frontispiece}
@@ -89,11 +92,13 @@
 \tableofcontents
 
 \listoffigures
+% \listoftables
+\listofalgorithms
+\addtocontents{loa}{\def\string\figurename{Algorithm}}
 
-%\listoftables
 \pagenumbering{arabic}
 \include{chapters/chapter1}
-% \pagenumbering{arabic}
+\pagenumbering{arabic}
 \include{chapters/chapter2}
 \include{chapters/chapter3}
 \include{chapters/chapter4}

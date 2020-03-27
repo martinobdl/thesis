@@ -1,3 +1,184 @@
-\chapter{Online Gradient Descent for Online Portfolio Optimization with Transaction Costs}
+\chapter{Online Gradient Descent for Online Portfolio Optimization with Transaction Costs}\label{ch:OGD}
 
-The Online Gradient Descent (OGD) algorithm is the first algorithm developed in the field of Online Convex Optimization \cite{zinkevich2003online}. We extended its use to the Online Portfolio Optimization framework, this will be discussed more in details in . \todo{add ch} \todo{continue}
+The Online Gradient Descent (OGD) algorithm is one of the first algorithm developed in the field of Online Convex Optimization \cite{zinkevich2003online}. We extended its use to the Online Portfolio Optimization framework and proved that the OGD algorithm has many interesting properties, among which a bound on the total regret $R_T^C$.
+
+\begin{algorithm}
+    \caption{OGD in Online Portfolio Optimization with Transaction Costs}
+    \label{alg:OGD_in_OPO}
+    \begin{algorithmic}[1]
+    \REQUIRE learning rate sequence $\{\eta_1, \ldots, \eta_T\}$  \nonumber
+    \STATE Set $\mathbf{x}_1 \gets \frac{1}{N} \mathbf{1}$ \label{line:init_OGD}
+    \FOR {$t \in \{ 1, \ldots, T \}$}
+    \STATE $\mathbf{z}_{t+1} \gets \mathbf{x}_{t}+ \eta_t \frac{\mathbf{y}_t}{\langle \mathbf{y}_t,\mathbf{x}_t \rangle}$ \label{line:update_OGD}
+    \STATE Select Portfolio $\mathbf x_{t+1}=\Pi_{\Delta_{N-1}}(\mathbf z_t)$ \label{line:line_projection_OGD}
+    \STATE Observe $\mathbf{y}_{t+1}$ from the market \label{line:out_OGD}
+    \STATE Get wealth $\log( \langle \mathbf{y}_{t+1},\mathbf{x}_{t+1} \rangle) - \gamma|| \mathbf{x}_{t+1} - \mathbf{x}_{t} ||_1$ \label{line:wealth}
+    \ENDFOR
+    \end{algorithmic}
+\end{algorithm}
+
+\section{Using OGD for Portfolio Optimization} \label{sec:analysis}
+
+This section describes the adaptation of the OGD algorithm to the Online Portfolio Optimization framework and provides a theoretical analysis of such an algorithm in the presence of transaction costs.
+
+\subsection{The OGD Algorithm}
+\label{sec:OGD}
+The definition of the OGD update rule for a generic convex loss function $f_t(\mathbf{x}_t)$ over a generic convex set $\mathcal D$ is the following:
+\begin{equation}\label{eq:OGD_general}
+  \mathbf{x}_{t+1} = \Pi_{\mathcal D} \left( \mathbf{x}_t - \eta_t \nabla f_t(\mathbf{x}_t) \right),
+\end{equation}
+where $\Pi_{\mathcal D} (y) := \arginf\limits_{x \in \mathcal D } || y - x ||_2^2$ is the standard projection of the vector $y$ onto $\mathcal D$, $\eta_t > 0$ is the learning rate at round $t$, and $\nabla$ denotes the gradient operator.
+Recalling that in the Online Portfolio Optimization framework the function to be minimized is the loss $f_t(\mathbf{x}_t) = -\log (\langle \mathbf{x}_t, \mathbf{y}_t \rangle )$, the portfolio update rule becomes:
+\begin{equation} \label{eq:OGD_port}
+   \mathbf{x}_{t+1}= \Pi_{\Delta_{N-1}}\left( \mathbf{x}_t+\eta_t \frac{\mathbf{y}_t}{\langle \mathbf{x}_t, \mathbf{y}_t \rangle}\right).
+\end{equation}
+The pseudo-code corresponding to the OGD algorithm is presented in Algorithm~\ref{alg:OGD_in_OPO}. 
+The algorithm starts with a portfolio $\mathbf{x}_1$ equally allocated among the $N$ available assets (Line~\ref{line:init_OGD}).
+Then, for each round $t \in \{ 1, \ldots, T \}$ it rebalances the assets according to Equation~\eqref{eq:OGD_port}, observes the market outcomes $\mathbf{y}_{t+1}$ (Line~\ref{line:out}), and gains a per-round wealth, including costs, of $\log(\langle \mathbf{y}_{t+1},\mathbf{x}_{t+1} \rangle) - \gamma|| \mathbf{x}_{t+1} - \mathbf{x}_{t} ||_1$ (Line~\ref{line:wealth}). The projection in Line \ref{line:line_projection_OGD}, can be implemented very efficiently as we will discuss in Section \ref{sec:implementation} with Algorithm \ref{alg:projection}.
+
+\begin{figure}[t!]
+\centering
+\input{./img/OGD.tex}
+\caption{Online Gradient Descent.}
+\label{fig:OGD}
+\end{figure}
+
+Note that OGD is an instance of the OMD algorithm described in Section \ref{sec:OMD}, with $\psi(\mathbf x)=||\mathbf x||_2^2$. Indeed the general update Equation \eqref{eq:OGD_general} is equivalent to:
+
+\begin{align}
+	\mathbf x_{t+1}&=\arginf\limits_{\mathbf x\in\Delta}||\mathbf x-\mathbf x_t+\eta_t\nabla f_t(\mathbf x_t)||_2^2\\
+	&=\arginf\limits_{\mathbf x\in\Delta}\left(||\mathbf x-\mathbf x_t||_2^2+\eta_t^2||\nabla f_t(\mathbf x_t)||_2^2+2\langle\nabla f_t(\mathbf x_t),\mathbf x-\mathbf x_t\rangle\right)
+\end{align}
+
+
+Moreover the following lemma is paramount to prove the regret bound for OGD. This lemma establishes the non expansiveness of the projection operator $\Pi_\Delta$:
+
+\begin{lemma}(Generalized Pythagorean Theorem.)\label{lemma:non_expansive}
+Let $\mathcal D\in\mathbb R^N$ a convex set and $A\in\mathbb R^{N\times N}$ a semi-positive defined matrix. Then for any point $\mathbf x_0\in\mathcal D$ we have:
+
+\begin{equation}
+\langle\mathbf x-\mathbf x_0,A(\mathbf x-\mathbf x_0) \rangle\ge\langle\mathbf z-\mathbf x_0,A(\mathbf z-\mathbf x_0)\rangle,
+\end{equation}
+where $\mathbf z=\Pi_{\mathcal D}^A(\mathbf x)=\arginf\limits_{\mathbf y\in\mathcal D}\langle\mathbf y-\mathbf x,A(\mathbf y-\mathbf x)\rangle$.
+\end{lemma}
+
+In the case of $A=\mathbb I_{N\times N}$, being $\mathbb I_{N\times N}$ the identity matrix in $\mathbb R^{N\times N}$, we have that $||\Pi_\mathcal D(\mathbf x)-\mathbf x_0||_2^2\le||\mathbf x-\mathbf x_0||_2^2$. Hence, that the operator $\Pi_\Delta:\mathbb R^N\to\mathcal D$ is non-expansive.
+
+\section{Regret Analysis}
+
+\subsection{OGD Regret on the Wealth}
+We recall that, for a generic convex function $f_t(x)$, it has been shown in~\cite{belmega2018online} that $
+R_T(OGD) = \mathcal{O}(\sqrt{T})$ if the loss function $f_t(x)$ is convex, as in our case.
+We follow the proof in~\cite{zinkevich2003online} to derive the specific result for the regret of OGD in the Online Portfolio Optimization framework:
+\begin{theorem}\label{th:convex_regret_OGD}
+    If Assumption~\ref{ass:nojunk} holds, the OGD algorithm with $\eta_t = \frac{K}{\sqrt{t}}$, $\forall K \in \mathbb{R}^+$ has a regret on the wealth of:
+    \begin{equation*}
+        R_T(OGD) \leq \left( \frac{1}{K} + \frac{N K \epsilon_u^2}{\epsilon_l^2} \right) \sqrt{T}.
+    \end{equation*}
+\end{theorem}
+\begin{proof}
+Notice that the $L_2$ diameter of a simplex $\Delta_{N-1}$ is $D = \sqrt{2}$ for any $N$ and that, under Assumption~\ref{ass:nojunk}, it is possible to bound the gradient of the loss as follows:
+\begin{equation} \label{eq:bounded_gradient}
+    ||\nabla \log (\langle \mathbf{x}_t, \mathbf{y}_t \rangle)||_2 \leq \frac{\epsilon_u \sqrt{N}}{\epsilon_l}:=G_2.
+\end{equation}
+Given the update in Equation~\eqref{eq:OGD_port} for the OGD algorithm, we have:
+\begin{align}
+     ||\mathbf{x}_{t+1} - \mathbf{x}^*||_2^2 &= ||\Pi_{\Delta_{N-1}}(\mathbf{x}_t + \eta_t \nabla \log(\langle \mathbf{x}_t, \mathbf{y}_t \rangle)) - \mathbf{x}^*||_2^2 \nonumber\\
+    \leq & ||\mathbf{x}^* - \mathbf{x}_t||_2^2-2\eta_t\langle \mathbf{x}_t-\mathbf{x}^*,\nabla \log( \langle \mathbf{x}_t, \mathbf{y}_t \rangle) \rangle \nonumber \\ 
+    & + \eta_t^2||\nabla \log( \langle \mathbf{x}_t, \mathbf{y}_t \rangle)||_2^2, \label{eq:magic}
+\end{align}
+where we used the fact that the projection operator $\Pi_{\Delta_{N-1}}(\cdot)$ is non-expansive (Lemma \ref{lemma:non_expansive}).
+Rearranging the terms, we have:
+\begin{align*}
+    \langle \mathbf{x}^*-\mathbf{x}_t, \nabla \log (\langle \mathbf{x}_t, \mathbf{y}_t \rangle)\rangle\le \frac{1}{2\eta_t}\left( ||\mathbf{x}_t-\mathbf{x}^*||_2^2-||\mathbf{x}_{t+1}-\mathbf{x}^*||_2^2\right) + \frac{\eta_t}{2}G_2^2.
+\end{align*}
+
+Using the above inequality and the convexity of the logarithm, we bound the regret $R_T(OGD)$ as follows:
+\begin{align*}
+     R_T (ODG) &= \sum\limits_{t=1}^T\log (\langle \mathbf{x}^*, \mathbf{y}_t \rangle)-\log (\langle \mathbf{x}_t, \mathbf{y}_t \rangle) \\
+    & \le\sum\limits_{t=1}^T\langle\mathbf{x}^*-\mathbf{x}_t,\nabla \log (\langle \mathbf{x}_t, \mathbf{y}_t \rangle)\rangle\\
+    &\le\sum\limits_{t=1}^T\left[\frac{1}{2\eta_t}\left(||\mathbf{x}_t-\mathbf{x}^*||_2^2-||\mathbf{x}_{t+1}-\mathbf{x}^*||_2^2\right)+\frac{\eta_t}{2}G_2^2\right]\\
+    &\le \frac{D^2}{2\eta_1}+\frac{D^2}{2}\sum\limits_{t=2}^{T}\left(\frac{1}{\eta_t}-\frac{1}{\eta_{t-1}}\right)+\sum\limits_{t=1}^T\frac{\eta_t G_2^2}{2}\\
+    &=\frac{D^2}{2\eta_T}+\sum\limits_{t=1}^T\frac{\eta_tG_2^2}{2} \le \left(\frac{D^2}{2K}+G_2^2K\right)\sqrt{T},
+\end{align*}
+where, for the last inequality, we used that $\sum_{t=1}^T \frac{1}{\sqrt{t}} \leq 2 \sqrt{T}$.
+By plugging the expression of the diameter $D$ and the $L_2$ bound on the gradient $G_2$, we conclude the proof.
+\end{proof}
+
+\subsection{OGD Regret on the Costs}
+In the following theorem, using techniques similar to the ones in~\cite{andrew2013tale}, we bound the transaction costs $C_T(OGD)$ of the OGD algorithm in the Online Portfolio Optimization framework:
+\begin{theorem}\label{th:tc_ogd}
+    If Assumption~\ref{ass:nojunk} holds, the OGD algorithm with $\eta_t = \frac{\eta_0}{\sqrt{t}}$,  $\forall K \in \mathbb{R}^+$ has a regret on the costs of:
+    \begin{equation*}
+        C_T(OGD) \leq \frac{2 N K \gamma \epsilon_u}{\epsilon_l} \sqrt{T}.
+    \end{equation*}
+\end{theorem}
+
+\begin{proof}
+Recall that, in this setting, the regret on the costs $C_T(OGD)$ is equivalent to the sum of the costs incurred by the OGD algorithm, since the best CRP incurs in no costs.
+Therefore, we have:
+\begin{align}
+    C_T(OGD) & = \gamma \sum\limits_{t=1}^{T-1} ||\mathbf{x}_{t+1} - \mathbf{x}_{t}||_1 \\
+    & \leq \gamma\sum\limits_{t=1}^{T-1} \sqrt{N} ||\mathbf{x}_{t+1} - \mathbf{x}_{t}||_2 \label{eq:cost1}\\
+    & \leq \gamma\sum\limits_{t=1}^{T-1}\sqrt{N}|| \eta_t \nabla \log( \langle \mathbf{x}_t, \mathbf{y}_t \rangle)||_2 \label{eq:cost2}\\
+    &\leq \gamma\sqrt{N} G_2 \sum\limits_{t=1}^{T-1} \eta_t \label{eq:cost3}\\
+    & \leq 2\gamma G_2K\sqrt{NT}, \label{eq:cost4}
+\end{align}
+where we used the equivalence of the norms in $\mathbb{R}^N$ for the inequality in Equation~\eqref{eq:cost1}, the fact that the projection operator $\Pi_{\Delta}(\cdot)$ is non-expansive and the update formula for OGD to derive Equation~\eqref{eq:cost2}, and the fact that the gradient of the loss is bounded by $G_2$ in Equation~\eqref{eq:cost3}. 
+Finally, we conclude the proof by substituting the bound on the gradient in Equation~\eqref{eq:bounded_gradient} into Equation~\eqref{eq:cost4}.
+\end{proof}
+
+\subsection{Total Regret}
+Summarizing the bounds derived in Theorems~\ref{th:convex_regret_OGD} and~\ref{th:tc_ogd}, we obtain the following:
+\begin{theorem} \label{thm:total_regret}
+    If Assumption~\ref{ass:nojunk} holds, the OGD algorithm with $\eta_t = \frac{K}{\sqrt{t}}$,  $\forall K \in \mathbb{R}^+$ has a total regret of:
+    \begin{align*}
+        & R_T^C(OGD) \le \left[ \frac{1}{K} + \frac{NK\epsilon_u}{\epsilon_l}\left( \frac{\epsilon_u}{\epsilon_l} + 2 \gamma \right) \right] \sqrt{T}. %\label{eq: OGD_regret_plu_costs_bound}
+    \end{align*}
+\end{theorem}
+If the investment horizon $T$ is known in advance, the learning rate $\eta_t$ can be tuned to obtain a slightly better upper bound on the total regret:
+\begin{corollary}\label{cor:OGD_T_known}
+   If Assumption~\ref{ass:nojunk} holds, the OGD algorithm with $\eta_t=\frac{K}{\sqrt{T}}$, $\forall K \in \mathbb{R}^+$ has a total regret of:
+    \begin{align}
+    R_T^C(OGD) &\leq \left( \frac{1}{K} + \frac{NK \epsilon_u^2}{2 \epsilon_l^2} \right) \sqrt{T} + 2 \gamma  \frac{\epsilon_u}{\epsilon_l} \sqrt{T}. \label{eq:OGD_T_known}
+    \end{align}
+\end{corollary}
+
+Finally, knowing the value of $\epsilon_l$ and $\epsilon_u$ in Assumption \ref{ass:nojunk}, the parameter $K$ can be chosen to minimize the bound in Theorem~\ref{thm:total_regret}, giving the following result:
+
+\begin{corollary} \label{cor:optimal_bound}
+    If Assumption~\ref{ass:nojunk} holds, the OGD algorithm with $\eta_t = \frac{1}{\sqrt{t}} \left[ \frac{N \epsilon_u}{\epsilon_l} \left( \frac{\epsilon_u}{\epsilon_l} + 2 \gamma \right) \right]^{-\frac{1}{2}}$ has a total regret of:
+    \begin{equation*}
+        R_T^C(OGD) \leq 2\sqrt{\frac{N \epsilon_u}{\epsilon_l}\left( \frac{\epsilon_u}{\epsilon_l} + 2 \gamma \right) T}.
+    \end{equation*}
+\end{corollary}
+
+In what follows, we compare the theoretical guarantees of OGD in terms of computational complexity and regret with OLU and U$_C$P, the only algorithms that provide upper bounds to total regret.
+
+\section{Implementation of the Online Gradient Descent Algorithm}\label{sec:implementation}
+
+The OGD algorithm can be implemented very efficiently, indeed all computations of Algorithm \ref{alg:OGD_in_OPO} are trivial and lightweight, except for the projection operator $\Pi_{\Delta_{N-1}}$ onto the simplex $\Delta_{N-1}$. In \cite{duchi2008efficient} the authors propose the following algorithm to solve the following optimization problem:
+
+\begin{equation}
+\Pi_{\Delta_{N-1}}(\mathbf x_0)=\arginf\limits_{\mathbf x\in\Delta_{N-1}}\frac{1}{2}||\mathbf x-\mathbf x_0||_2^2
+\end{equation}
+
+
+\begin{algorithm}
+    \caption{Near Linear Time Projection Onto The Probability Simplex}
+    \label{alg:projection}
+    \begin{algorithmic}[1]
+    \REQUIRE $\mathbf{z}\in\mathbb R^N.$ \nonumber
+    \STATE Sort $\mathbf z$ into $z_1\ge z_2\ge \ldots \ge z_N.$ \label{line:sorting}
+    \STATE Set $K\gets\max\left\{j=1,\ldots,N\biggr\rvert z_j-\frac{1}{j}\left(\sum\limits_{k=1}^jz_k-1\right)>0\right\}.$
+    \STATE Set $\theta=\frac{1}{K}\left(\sum\limits_{i=1}^Kz_i-1\right).$
+    \STATE Set $w_i\gets(z_i-1)^+, \ \forall i\in1,\ldots,N$.
+    \RETURN $\mathbf w=(w_1,\ldots,w_N).$
+    \end{algorithmic}
+\end{algorithm}
+
+The procedure is Near-Linear since in Line \ref{line:sorting}, we need to sort the input vector, that is known to be of $O(N\log N)$ complexity. Hence Algorithm \ref{alg:projection} is a $O(N\log N)$ procedure of projecting a $\mathbb R^N$ vector onto the probability simplex $\Delta_{N-1}$. Note that Algorithm \ref{alg:projection} can be refined to be of $O(N)$ complexity if we avoid to sort the vector, this can be one as shown in \cite{duchi2008efficient}.
+
+\section{Discussion on the Computational Complexity and Regret Bound}
+
+
