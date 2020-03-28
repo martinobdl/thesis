@@ -4,15 +4,15 @@ In this section we will extend the Online Portfolio Optimization model to consid
 Indeed, the importance of the trading mechanism is usually not taken into account in the models of Online Portfolio Optimization, notably, the most important aspect left out of the analysis is transaction costs. Including transaction costs into the Online Portfolio Optimization model is non-trivial and complex. The reason why transaction costs are more difficult to include into the model is that the inclusion of transaction costs change significantly the loss function and, as we shall see, the theoretical guarantees of the algorithms do relay heavily on very strict conditions on the loss function, such as convexity and exp-concavity.
 Notice that an algorithm that guarantees sub-linear regret without transaction costs, is not guaranteed to have sub-linear regret in the more realistic scenario in which trading costs are present. 
 
-Very few works include transaction costs in the Online Porfolio Optimization model. 
+Very few works include transaction costs in the Online Portfolio Optimization model. 
 There exist a wide variety of heuristic methods that tried to overcome this problem~\cite{li2018transaction,yang2018reversion}, but they do not provide any guarantee on the regret in the presence of transaction costs. 
-To the best of our knowledge, there are only two studies that analyze total regret: U$_C$P~\cite{blum1999universal}, and Online Lazy Updates (OLU)~\cite{das2013online}. We will present the algorithm designed in these works in Chapter \ref{ch:algos}. The principal contribution of this thesis is to give an algorithm that has sub-linear regret in the Online Portfolio Optimization problem with transaction costs.
+To the best of our knowledge, there are only two studies that analyze transaction costs theoretically: Universal Portfolio with Costs (U$_C$P)~\cite{blum1999universal}, and Online Lazy Updates (OLU)~\cite{das2013online}, but only OLU gives an algorithm to implement. We will present the algorithm designed in these works in Chapter \ref{ch:algos}. The principal contribution of this thesis is to give an algorithm that has sub-linear regret in the Online Portfolio Optimization problem with transaction costs.
 
 \section{Online Portfolio Optimization with Transaction Costs}
 
-Transaction costs are notably difficult to model or even define. In order to model trading costs correctly, one would have to take into account many aspect of the trading mechanism and explore the mechanism of trading in its minutiae, this field of research is called \emph{market microstructure}. Great starting references can be found in \cite{harris2003trading} and \cite{o1997market}, in which the authors explore the practical implementation of a trade and its theoretical formulation, respectively. Our model of transaction costs is much simpler in order to recover regret bounds in the presence of trading costs. \todo{F: mi sembra un po' riduttivo. M: si. però è vero. Come lo giustifico meglio?}
+Transaction costs are notably difficult to model or even define. In order to model trading costs correctly, one would have to take into account many aspects of the trading mechanism and explore the mechanism of trading in its minutiae, this field of research is called \emph{market micro-structure}. Great starting references can be found in \cite{harris2003trading} and \cite{o1997market}, in which the authors explore the practical implementation of a trade and its theoretical formulation, respectively. Our model of transaction costs is much simpler in order to recover regret bounds in the presence of trading costs. \todo{F: mi sembra un po' riduttivo. M: si. però è vero. Come lo giustifico meglio?}
 
-We will then perform some approximations and assumption in order to define a new concept of regret to be used in the framework of Online Portfolio Optimization. The final model for Online Portfolio Optimization with transaction costs, that will be derived in this section is the same used in \cite{das2013online}.
+At the end of this section we will then perform some approximations in order to define a new concept of regret to be used in the framework of Online Portfolio Optimization. The final model for Online Portfolio Optimization with transaction costs, that will be derived in this section is the same used in \cite{das2013online}.
 
 Following the approach previously used in the OPO literature~\cite{blum1999universal}, we use an approximation of the real transaction costs considering them proportional to the difference in portfolio allocation.
 Formally, the transaction costs, at round $t$, are implicitly determined by the solution of the following equation:
@@ -57,6 +57,12 @@ Formally, using the approximation of the cost provided in Equation (4.4) we have
 
 The approximation in Equation \eqref{eq:expansion} is because $\gamma\ll1$ and $\log(1-x)\approx-x$.
 
+Hence we can define quantity 
+\begin{equation}\label{eq:l1_wealth}
+W_T^C:=W_T\exp\left\{-\gamma\sum\limits_{t=1}^T||\mathbf{x}_t-\mathbf{x}_{t-1}||_1\right\},
+\end{equation} 
+which is the wealth obtained by an algorithm assuming transaction costs given by Equation \eqref{eq:fake_tc}.
+
 
 Note that by using Equation \eqref{eq:fake_tc} we have that the BCRP pays zero transaction costs, and this observation justifies further the use of the following definitions:
 
@@ -82,6 +88,9 @@ where $R_T(\mathcal A)$ is defined as the log-loss regret introduced in Section 
 
 We are mainly interested in algorithms that bound the total regret $R_T^C$, as we believe that this line of research might potentially start to close the bridge between theory and practice in the Online Portfolio Optimization framework.
 
-Finally, it is worth noting that the problem of dealing with transaction costs has also been tackled in sequential decision-making settings similar to the OPO one, \emph{i.e.}, in the expert and bandit learning~\cite{li2018online,cesa2013online,trovo2016budgeted} and the Metrical Task Systems (MTS) literature~\cite{lin2012online}, where the notion of regret has been extended to include the cost of changing the prediction of the algorithm over time. This algorithms cannot be applied directly to the problem of Online Portfolio Optimization, because their setting is essentially notably different. For example in \cite{li2018online} the authors are concerned with Online Learning in applications where the outcomes are very predictable and hence they assume to have knowledge of the $n$ future outcomes. This assumption is clearly not met in financial applications.
 
+\section{Related Works in Online Learning and Switching Costs}
+Finally, it is worth noting that the problem of dealing with transaction costs has also been tackled in sequential decision-making settings similar to the Online Portfolio Optimization one, \emph{i.e.}, in the expert and bandit learning~\cite{li2018online,cesa2013online,trovo2016budgeted} and the Metrical Task Systems literature~\cite{lin2012online}, where the notion of regret has been extended to include the cost of changing the prediction of the algorithm over time. This algorithms cannot be applied directly to the problem of Online Portfolio Optimization, because their setting is essentially notably different. 
+For example in \cite{li2018online} the authors are concerned with Online Learning in applications where the outcomes are very predictable (\emph{e.g.}, energy consumption) and hence they assume to have knowledge of the $n$ future outcomes. This assumption is clearly not met in general in financial assets.
+On the other hand, the Multi Arm Bandit framework assumes that the learning agent has knowledge of the loss function only for the the action taken at the previous step, and cannot compute the loss associated with the other actions. Nonetheless, in \cite{ito2018regret} the authors suggested that the partial observability of the Multi Armed Bandit framework could be used to model illiquid assets such as the real estate market.
 

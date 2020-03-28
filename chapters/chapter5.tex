@@ -52,7 +52,7 @@ R_T(UP)\le(N-1)\log(T+1).
 Clearly the UP algorithm is computationally hard as it involves integration over a $N$-simplex. Indeed, there is an extensive research that looks into efficient implementations of the UP algorithm \cite{kalai2002efficient}.
 
 
-Moreover, the update rule in Equation \eqref{eq:UP} can be generalized as follow:
+Moreover, the update rule in Equation \eqref{eq:UP} can be generalized as follows:
 
 \begin{equation}\label{eq:general_UP}
 \mathbf x_{t+1}=\frac{\int_{\Delta}\mathbf x W_t(\mathbf x)\mu(\mathbf x)d\mathbf x}{\int_{\Delta} W_t(\mathbf x)\mu(\mathbf x)d\mathbf x},
@@ -65,7 +65,7 @@ where $\mu(\mathbf x)$ is a distribution over $\Delta_{N-1}$, the standard UP al
 % To implement Universal Portfolio
 
 
-\subsection{Exponential Gradient}
+\subsection{Exponential Gradient}\label{sec:EG}
 
 The Exponential Gradient (EG) algorithm is a specification of the OMD algorithm described in Section \ref{sec:OMD}, by using the Kullback–Leibler divergence $d_\psi(\mathbf x,\mathbf y)=KL(\mathbf x,\mathbf y)=\sum\limits_{i=1}^Nx_i\log(x_i/y_i)$ as the Bregman divergence the, and $\eta_t=\eta$ as the constant sequence of learning rates. The update rule for EG in this case becomes:
 
@@ -99,10 +99,9 @@ $$D_1=\sup\limits_{\mathbf x,\mathbf y\in\Delta_{N-1}}||\mathbf x-\mathbf y||_1\
 Therefore, we can apply Theorem \ref{th:regret_omd} with $\eta=\frac{1}{G_\infty}\sqrt{\frac{2\log N}{T}}$ and $\mathbf x_1=(1/N,\ldots,1/N)$ giving as a result the thesis.
 \end{proof}
 
-Note that one could also obtain a regret bound by using the fact that the EG algorithm is a specialization of OMD with $\psi(\mathbf x)=\sum\limits_{i=1}^N x_i\log(x_i)$ 
+Note that one could also obtain a regret bound by using the fact that the EG algorithm is a specialization of OMD with $\psi(\mathbf x)=\sum\limits_{i=1}^N x_i\log(x_i)$. 
 
-
-\subsection{Online Newton Step}
+\subsection{Online Newton Step}\label{sec:ONS}
 
 The Online Newton Step (ONS) \cite{hazan2007logarithmic} algorithm is one of the few algorithms other than the UP one, that guarantees a logarithmic bound $R_T(ONS)=\mathcal O(\log T)$. The method uses second order information of the loss function, but it can nonetheless be stated into first order method such as OMD, as we will discuss at the end of this section.
 
@@ -148,7 +147,7 @@ The main idea of ONS is exploiting the weak-strong convexity of exp-concave func
 
 From Equation \eqref{eq:weak_strong_conv_exp_concave} we can see that the matrix $A$ used by the ONS algorithm is just a lower bound on the Hessian of the loss function. This is also the reason why the projection onto the simplex of the ONS algorithm is the non standard projection defined by the matrix $A_t$ defined in Equation \eqref{eq:matrix_ONS}.
 
-\begin{theorem}(Regret Bound for the Online Newtonw Step Algorithm).
+\begin{theorem}(Regret Bound for the Online Newton Step Algorithm).
 
 By choosing $\beta=\frac{\alpha}{8\sqrt{N}}$ in Equation \eqref{eq:update_ONS}, the regret bound for the ONS algorithm becomes:
 
@@ -163,7 +162,7 @@ ONS can also be seen as a specification of OMD \cite{luo2018efficient} by choosi
 
 To the best of our knowledge there are only two works that bound the total regret $R_T^C$ defined in Chapter \ref{ch:transaction_costs}. We will present the works and discuss their limitations, that we tried to solve with our approach.
 
-\subsection{Online Lazy Updates}
+\subsection{Online Lazy Updates}\label{sec:OLU}
 
 Online Lazy Updates (OLU) \cite{das2013online} is an algorithm designed to minimize explicitly the total regret $R_T^C$. The origin of this algorithm has to be traced back to a generalization of the OMD algorithm discussed in Section \ref{sec:OMD}. Namely, the generalization of the OMD algorithm that we are referring to is the Composite Objective Mirror Descent (COMID) algorithm \cite{duchi2010composite}. The idea behind the COMID algorithm is to have a composite loss function of the kind $g_t(\mathbf x)=f_t(\mathbf x) + r(\mathbf x)$, then the algorithm linearizes the first term $f_t(\mathbf x)$ of the composite loss (as in OMD) but does not linearize the second term $r(\mathbf x)$ of the composite loss $g_t(\mathbf x)$. Both terms of the loss function, $f_t$ and $r$, are assumed to be convex.
 
@@ -211,7 +210,7 @@ The OLU algorithm is defined by the following update rule:
 
 Note that there are multiple definitions of the OLU algorithm, and we reported a version in which the first term of the loss has not been linearized. Linearization of the first term of the loss with $\langle\nabla f_t(\mathbf x_t),\mathbf x\rangle$ would result in the same update rule and same analysis (since the loss $f_t$ is convex).
 
-With this specifications we obtain the result from Equation \eqref{eq:regret_comid_final}:
+With these specifications we obtain the result from Equation \eqref{eq:regret_comid_final}:
 
 \begin{equation}
 \sum\limits_{t=1}^T[f_t(\mathbf x_t)-f_t(\mathbf x)+\gamma||\mathbf x_t-\mathbf x_{t-1}||_1-\gamma||\mathbf x-\mathbf x_{t-1}||_1]\le \left( \frac{1}{K} + \frac{N K \epsilon_u^2 }{2 \epsilon_l^2} \right) \sqrt{T}.
@@ -225,12 +224,15 @@ Then, taking to the left hand side the terms $\gamma||\mathbf x-\mathbf x_{t-1}|
 
 Now the left hand side is equivalent to our Definition \ref{def:totoal_regret} of total regret $R_T^C$. Note that we do not have a sub-linear bound for the total regret yet. In order to recover the sub-linear bound on the total regret $R_T^C$ in \cite{das2014online} (Theorem 1) the authors assume $\gamma=\frac{\gamma_0}{\sqrt{T}}$. With this assumption we can recover the following bound on the total regret for the OLU algorithm:
 
-\begin{equation}
+\begin{theorem}[Total Regret of OLU~\cite{das2014online}]\label{th:OLU}
+    If Assumption~\ref{ass:nojunk} holds, the OLU algorithm with $\eta = \frac{K}{\sqrt{T}}$, $\forall K \in \mathbb{R}^+$, and $\gamma=\frac{\gamma_0}{\sqrt T}$ has a total regret of:
+    \begin{equation}\label{eq:OLU_regret}
 R_T^C(OLU)\le2\gamma_0\sqrt{T}+\left( \frac{1}{K} + \frac{N K \epsilon_u^2 }{2 \epsilon_l^2} \right) \sqrt{T}.
 \end{equation}
 
-It is clear from our discussion on the model for Online Portfolio Optimization with transaction costs described in Chapter \ref{ch:transaction_costs} that $\gamma>0$ is fixed and independent on the time horizon $T$ of the investment process. \todo{F: Scriviamola prima questa cosa di $\gamma$ costante}
-\todo{add ADMM}
+\end{theorem}
+
+It is clear from our discussion on the model for Online Portfolio Optimization with transaction costs described in Chapter \ref{ch:transaction_costs} that $\gamma>0$ is fixed and independent on the time horizon $T$ of the investment process. \todo{F: Scriviamola prima questa cosa di $\gamma$ costante. M: mi smebra ovvia e quinid non saprei come gistificare di scriverla.}
 
 \subsection{Implementation of Online Lazy Update}
 
@@ -272,14 +274,15 @@ If we define the residual $\mathbf r=A\mathbf x+B\mathbf z-\mathbf c$ and $\math
 \end{equation}
 So we can rewrite the update Equations \eqref{eq:update_ADMM_1} as reported in Algorithm \ref{alg:ADMM}.
 
-\begin{algorithm}[!h]
+\begin{algorithm}[!ht]
     \caption{Alternating Direction Method of Multipliers}
     \label{alg:ADMM}
     \begin{algorithmic}[1]
     \REQUIRE $f,g,A,B,\mathbf c,\mathbf x^0,\mathbf z^0,\mathbf u^0,\rho$ \nonumber
     \WHILE{Stopping condition not met:}
     \STATE Update the primal variables: 
-    $$(\mathbf x^{k+1},\mathbf z^{k+1})=\arginf\limits_{\mathbf x,\mathbf z }\left\{f(\mathbf x)+g(\mathbf z)+\frac{\rho}{2}||A\mathbf x^{(k)}+B\mathbf z^{(k)}-\mathbf c+\mathbf u^{(k)}||\right\}$$
+    $$\mathbf x^{k+1}=\arginf\limits_{\mathbf x}\left\{f(\mathbf x)+\frac{\rho}{2}||A\mathbf x^{(k)}+B\mathbf z^{(k)}-\mathbf c+\mathbf u^{(k)}||\right\}$$
+    $$\mathbf z^{k+1}=\arginf\limits_{\mathbf z }\left\{g(\mathbf z)+\frac{\rho}{2}||A\mathbf x^{(k)}+B\mathbf z^{(k)}-\mathbf c+\mathbf u^{(k)}||\right\}$$
     \STATE Update the dual variable: 
     $$\mathbf u^{(k+1)}=\mathbf u^{(k)}+A\mathbf x^{k+1}+B\mathbf z^{(k+1)}-\mathbf c$$
     \ENDWHILE
@@ -289,7 +292,7 @@ So we can rewrite the update Equations \eqref{eq:update_ADMM_1} as reported in A
 
 Algorithm \ref{alg:ADMM} is know to converge (see \cite{boyd2011distributed} Appendix A).
 
-In order to use ADMM to solve the optimization of OLU in Equation \eqref{eq:update_OLU}, we have do the following identifications at each time $t$:
+In order to use ADMM to solve the optimization of OLU in Equation \eqref{eq:update_OLU}, we have do define the elements in the ADMM algorithm at each time $t$ as:
 
 \begin{equation}
 \begin{cases}
@@ -311,7 +314,7 @@ and then use Algorithm \ref{alg:ADMM} to solve Equation \eqref{eq:update_OLU}.
 
 % Indeed the Laplace mixture forecaster has the property \cite{cover1996universal} that the wealth of the Laplace Mixture Forecaster is the average wealth of the wealth of the expert class. The idea followed by the authors is to show that is the portfolios in the expert class are paying transaction costs then the regret experienced by the algorithm \todo{vorrei non mettere UCP perché non lo capisco}
 
-\section{Other Related Works}
+\section{Heuristic Algorithms without Regret Bound}
 
 There are also heuristic algorithms designed to exploit some known phenomena in markets. Among these heuristic algorithm we can find Anticor~\cite{borodin2004can}, PAMR~\cite{li2012pamr}, OLMAR~\cite{li2015moving}, and MRTC~\cite{yang2018reversion}, which in some cases outperform the algorithms described above in terms of empirical performance. 
 Remarkably, none of the above algorithms provide guarantees on the regret, and so we will avoid an in-depth description of their mechanism, since we are currently concerned with algorithms that provide theoretical guarantees without assumptions on the distribution of the marker vectors.

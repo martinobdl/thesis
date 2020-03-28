@@ -25,12 +25,12 @@ A thorough dissertation of the techniques that have been developed in the field 
     \end{enumerate}
 \end{definition}\todo{F: algorithm}
 
-In Online Learning an agent $\mathcal A$ has to guess the outcome $y_t$ based on a the past outcomes $y_1,y_2,\ldots,y_{t-1}$ of some events that are in the outcome space $\mathcal Y$, at each time step she will play (sometimes we will also say \emph{predict}) $x_t$, that is an element of the prediction space $\mathcal D$, and the environment will choose a loss function $f(\cdot,y_t)$ by determining the outcome $y_t$.
-The agent $\mathcal A$ is essentially the identification of the functions that maps the history of past outcomes to the new prediction:
+In Online Learning an agent $\mathcal A$ has to guess the outcome $y_t$ based on the past sequence $y_1,y_2,\ldots,y_{t-1}$ of events that are in the outcome space $\mathcal Y$, at each time step the agent will play (sometimes we will also say \emph{predict}) $x_t$, that is an element of the prediction space $\mathcal D$, and the environment will choose a loss function $f(\cdot,y_t)$ by determining the outcome $y_t$.
+The agent $\mathcal A$ is essentially the identification of the functions that map the history of past outcomes to the new prediction:
 $$\mathcal A\equiv\left\{h_{t-1}:=(y_1,\ldots,y_{t-1})\longmapsto x_t\right\}_{t\ge 1}. $$
 The simplest case is for $\mathcal Y=\mathcal D$ and both of finite cardinality, meaning that there are only a finite number of actions that the agent $\mathcal A$ can choose from. 
 We will sometimes refer to the environment defined in Section \ref{def:OGP} as ``adversarial'', since no stochastic characterization is given to the outcome sequence $y_t$ and the analysis of the regret is done assuming a worst case scenario.
-Since the adversary knows the prediction $x_t$, before deciding the outcome $y_t$, designing an algorithm which tries to minimize the loss is an hopeless task and so we have to set an easier scope. We will also present the counterexample to why the absolute minimization of the loss is an hopeless task, and present the adapt minimal framework to successful Online Learning in Adversarial Environment.
+Since the adversary knows the prediction $x_t$, before deciding the outcome $y_t$, designing an algorithm which tries to minimize the loss is a hopeless task and so we have to set an easier scope. In Section \ref{sec:regret_and_experts} we will also present the counterexample to why the absolute minimization of the loss is an hopeless task, and present the adapt minimal framework to successful Online Learning in Adversarial Environment.
 
 % ==================================================
 
@@ -38,19 +38,19 @@ Since the adversary knows the prediction $x_t$, before deciding the outcome $y_t
 
 % =================================================
 
-\subsection{Regret and Experts}
-\begin{figure}[t!]
+\subsection{Regret and Experts}\label{sec:regret_and_experts}
+\begin{figure}[!ht]
 \centering
 \input{./img/OnlineLearning.tex}
 \caption{Online Learning with Expert Advice as Multi Agent-Environment interaction.}
 \label{fig:OL}
 \end{figure}
 
-We stated that the objective of absolute loss minimization is hopeless in an adversarial framework, as the adversary can always choose the outcome $y_t$ that maximizes the loss $f(x,y_t)$ regardless of the decision $x\in\mathcal D$ taken by the learner. More formally, assume $\mathcal D$ to be the space of binary outcomes, \emph{i.e.} $|\mathcal D|=2$, and that $f$ is the absolute loss $f(x,y)=|x - y|$. Since the adversary plays after the learner $\mathcal A$, it can  make the loss of the learner $L_T=T$ by choosing as outcome the bit non predicted by the learner. Notice that no assumption has been made on the strategy followed by the learner $\mathcal A$.
+We stated that the objective of absolute loss minimization is hopeless in an adversarial framework, as the adversary can always choose the outcome $y_t$ that maximizes the loss $f(x,y_t)$ regardless of the decision $x\in\mathcal D$ taken by the learner. More formally, assume $\mathcal D$ to be the space of binary outcomes, \emph{i.e.} $|\mathcal D|=2$, and that $f$ is the absolute loss $f(x,y)=|x - y|$. Since the adversary plays after the learner $\mathcal A$, it can  make the loss of the learner $L_T=T$ by choosing $y=1-x$ as outcome the bit non predicted by the learner, making $f(x,y)=1$ at each time step. Notice that no assumption has been made on the strategy followed by the learner $\mathcal A$.
 From this example it is clear that the learner has to set a less ambitious goal.
 
 We do so by extending the theoretical formulation in Section \ref{sec:OnlineLearning} by including a set $\mathcal E$ of other players, this setting is called \emph{prediction with expert advice}. At each time step of the prediction game, each expert $e\in\mathcal E$, predicts an element $x_{e,t}\in\mathcal D$, and incurs in a loss $f(x_{e,t},y_t)$, just as the agent $\mathcal A$, creating a general multi-agent interaction as in Figure~\ref{fig:OL}. 
-Now the goal that the learner sets itself to solve is to obtain small losses with respect to the best expert in the class $\mathcal E$. This concept is captured by the definition of regret.
+The goal of the learner is to obtain small losses with respect to the best expert in the class $\mathcal E$. This concept is captured by the definition of regret.
 Formally, we define the regret $R_{e,T}$ for the agent $\mathcal A$ with respect to expert $e\in\mathcal E$ (assumed finite for the moment) as follows:
 
 \begin{equation}\label{def:Regret}
@@ -63,7 +63,7 @@ The regret observed by the agent $\mathcal A$ with respect to the entire class o
 	R_T=\sup\limits_{e\in\mathcal E}R_{e,T}=L_T-\inf\limits_{e\in\mathcal E}L_{e,T}.
 \end{equation}
 
-The task the agent $\mathcal A$ is set to solve is to find a sequence $x_t$ function of the information obtained up to the time $t$ in order to obtain small regret $y_T$ with respect to any sequence $y_1,y_2,\ldots$ chose by the environment.
+The task agent $\mathcal A$ is to find a sequence $x_t$, function of the information obtained up to the time $t$ in order to obtain small regret $y_T$ with respect to any sequence $y_1,y_2,\ldots$ chosen by the environment.
 
 In particular we aim to achieve sub-linear regret $R_T= o(T)$, meaning that the per-round regret $R_T/T$ will asymptotically vanish: 
 
@@ -74,17 +74,17 @@ In particular we aim to achieve sub-linear regret $R_T= o(T)$, meaning that the 
 where $ o(T)$ is the space of sub-linear affine functions. A strategy $\mathcal A$ that attains sub-linear regret is called \emph{Hannan-Consistent}~\cite{hannan1957approximation}.
 
 The regret is a measure of the distance between our online performance and the best offline (in retrospect) performance among the expert class $\mathcal E$, this is also called \emph{external regret} since it is compared to the external set of experts $\mathcal E$. A surprising fact is even that such algorithms do even exist.
-Indeed a first result is that in general there are no Hannan-consistent strategies, and just introducing the concept of regret is not enough for successful Online Learning. 
+Indeed a first result is that \emph{in general} there are no Hannan-consistent strategies, and just introducing the concept of regret is not enough by itself for successful Online Learning. 
 
 A first simple counterexample can be found in~\cite{cover1966behavior}. If the decision space $\mathcal D$ is finite then there exists a sequence of loss function such that $R_T=\Omega(T)$.
 % Cover Impossibility
-Again take $\mathcal D$ as a space of binary outcomes, absolute loss as $f(x,y)=|x - y|$, and the class of experts is composed by two experts, one predicting always $0$ and the other always $1$. Taking $T$ odd, we have that the loss of the best expert is $L_{e,T}<\frac{T}{2}$, and we have already shown that the adversary can make the loss of the learner $L_T=T$. It is now evident that the regret is $R_T>T-\frac{T}{2}$, which do not allow $R_T/T\to 0$. This argument is easily extended in the case of any finite decision space $\mathcal D$.
+Again take $\mathcal D$ as a space of binary outcomes, absolute loss as $f(x,y)=|x - y|$, and the class of experts is composed by two experts, one predicting always $0$ and the other always $1$. Taking $T$ odd, we have that the loss of the best expert is $L_{e,T}<\frac{T}{2}$, and we have already shown that the adversary can make the loss of the learner $L_T=T$. It is now evident that the regret is $R_T>T-\frac{T}{2}$, which does not allow $R_T/T\to 0$. This argument is easily extended in the case of any finite decision space $\mathcal D$.
 
-To achieve sub-linear regret, the learner has to randomize its predictions, at each turn $t$, holds a probability distribution on the decision space and plays $x_t$ according to this distribution. Clearly the adversary has knowledge of the probability distribution of the learner $\mathcal A$, but has no knowledge of the random seed used by the agent $\mathcal A$, \emph{i.e.} does not know the actual decision sampled from the distribution held by the agent. If the original decision space was $\mathcal D$ with $|\mathcal D|=N$ after the randomization of the decision, we effectively transformed the decision space $\mathcal D$ into the $\Delta_{N-1}\in\mathbb R^{N}$ probability simplex. By doing so we are formally extending the game into its mixed extension, as will be discussed further in Section \ref{sec:GT}. It can be viewed also as a \emph{covexification} of the domain, pointing to the undeniably necessity of convex geometry in this context, that will be discussed in Section \ref{sec:OCO}. Therefore, from now on the domain $\mathcal D$ will be convex, either by the problem specification or by randomized convexification if the problem has discrete decision space.
+To achieve sub-linear regret, the learner has to randomize its predictions, at each turn $t$, the agent choose a probability distribution on the decision space and plays $x_t$ according to this distribution. Clearly the adversary has knowledge of the probability distribution of the learner $\mathcal A$, but has no knowledge of the random seed used by the agent $\mathcal A$, \emph{i.e.} does not know the actual decision sampled from the distribution held by the agent. If the original decision space was $\mathcal D$ with $|\mathcal D|=N$ after the randomization of the decision, we effectively transformed the decision space $\mathcal D$ into the $\Delta_{N-1}\in\mathbb R^{N}$ probability simplex. By doing so we are formally extending the game into its mixed extension, as will be discussed further in Section \ref{sec:GT}. It can be viewed also as a \emph{covexification} of the domain, pointing to the undeniably necessity of convex geometry in this context, that will be discussed in Section \ref{sec:OCO}. Therefore, from now on the domain $\mathcal D$ will be convex, either by the problem specification or by randomized convexification if the problem has discrete decision space.
 
 \subsection{Existence of No-Regret Strategies}\label{sec:existence_of_no_regret}
 In this section we will show the existence of Hannan-consistent strategies in the case of finite experts and provide a general form to generate sub-linear regret strategies. 
-The general idea with a finite class of experts is given by the Weighted Average Forecaster, which implement a the natural idea of predicting as the weighted average prediction of the experts predictions:
+The general idea with a finite class of experts is given by the Weighted Average Forecaster, which implements a the natural idea of playing as the weighted average of the experts predictions:
 
 \begin{definition}(Weighted Average Forecaster).\label{def:weighted_avg}
 For a finite class of experts $\mathcal E=\{E_1,\ldots,E_N\}$, the weighted average prediction is defined as
@@ -102,8 +102,8 @@ We can generalize the simple weighted average prediction in Equation \eqref{def:
 x_t = \frac{\sum\limits_{i=1}^{N}\partial_i \Phi(\mathbf R_{t-1}) x_{t,i}}{\sum\limits_{i=1}^{N}\partial_i \Phi(\mathbf R_{t-1}) },
 \end{equation}
 
-where $\Phi(\mathbf u)=\varphi\left(\sum\limits_{i=1}^N\phi(u_i)\right)$ is a function $\Phi:\mathbb R^N\to\mathbb R^+$ defined through two increasing functions $\phi,\varphi:\mathbb R\to\mathbb R^+$, $\varphi,\phi\in\mathcal C^2(\mathbb R)$ and concave and convex, respectively and $\mathbf R_T=(R_{1,T},\ldots,R_{N,T})$.
-By specializing the two functions $\varphi,\phi$ we can derive most of the algorithm for dealing with prediction under expert advice.
+where $\Phi(\mathbf u)=\varphi\left(\sum\limits_{i=1}^N\phi(u_i)\right)$ is a function $\Phi:\mathbb R^N\to\mathbb R^+$ defined through two increasing functions $\phi,\varphi:\mathbb R\to\mathbb R^+$, $\varphi,\phi\in\mathcal C^2(\mathbb R)$ concave and convex, respectively and $\mathbf R_T=(R_{1,T},\ldots,R_{N,T})$.
+By specializing the two functions $\varphi,\phi$ we can derive most of the algorithms for dealing with prediction under expert advice.
 The reasons behind the general form of Equation \eqref{eq:potential_avg} and an extended discussion can be found in~\cite{hart2001general}, \cite{cesa2003potential} and \cite{blackwell1956analog}, but the general idea is that the form of Equation \eqref{eq:potential_avg} has the following property:
 
 \begin{theorem}\cite{cesa2003potential}
@@ -161,10 +161,10 @@ where $\mathbf x_{e,t}=(x_{1,t},\ldots,x_{N,t})\in\mathbb R^N$ is the vector of 
 
 \section{Exp-Concave loss functions}\label{sec:exp-concave-mixture}
 
-It will be important for the study of Portfolio Optimization the exp-concave class of loss functions. The reason is that the natural loss function to be used in the Online Portfolio Optimization framework, is $1$ exp-concave, as we shall see in Chapter \ref{ch:OPO}.
+Very important for the study of Portfolio Optimization is the exp-concave class of loss functions. The reason is that the natural loss function used in the Online Portfolio Optimization framework, is $1$ exp-concave, as we shall see in Chapter \ref{ch:OPO}.
 
 \begin{definition}(Exp-concave function). 
-$g(x)$ is said $\nu$-exp concave if $e^{-\nu g(x)}$ is concave.
+$g(x)$ is said $\nu$ exp-concave if $e^{-\nu g(x)}$ is concave.
 \end{definition}
 
 When speaking about loss functions we are interested in concavity of the function in its first argument. Therefore we will say that a loss function $f$ is $\nu$ exp-concave if $f(\cdot,y)$ is $\nu$ exp-concave $\forall y\in\mathcal Y$. 
@@ -294,7 +294,7 @@ Now we will explore interesting properties of Hannan-consistent strategies. A su
 
 We showed that regardless of the strategy of player $2$, a player using an Hannan-consistent strategy achieves lower losses than the value of the game $V_1$. Clearly using an Hannan-consistent strategy means that if player $2$ was not adversarial, then player $1$ could potentially earn a significantly higher average payoff than the value $V$ of the game. By symmetry, if both players play an Hannan-consistent strategy then they will asymptotically reach the value of the game $V=V_1=V_2$.
 
-\begin{figure}[ht!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=7cm]{./img/rps_ewm.eps}
 \caption{Rock Paper Scissor Dynamics in the $\Delta_2$ simplex, generated by the Exponentially Weighted Majority algorithm against an adversarial opponent.}
@@ -310,7 +310,7 @@ In general the dynamic of policies learned with Hanna consistent strategies are 
 Let us compare this framework to an apparently unrelated problem, namely optimization, that will turn out to be the most suited framework to embed the Online Portfolio Optimization Problem. In online optimization an agent $\mathcal A$ is designed to optimize a sequence of functions $f_t(x)$ where usually $f_t:\mathcal D\to \mathbb R$ is a real valued function from the set $\mathcal D\subset\mathbb R^n$. As a remark on the notation, in Online Convex Optimization literature, the loss functions are written as $f(x,y_t)\equiv f_t(x)$, dropping the explicit dependence on the outcome $y_t$.
 The decision space $\mathcal D$ is assumed to be convex, as the functions $f_t:\mathcal D\to \mathbb R$. This framework was first devised in \cite{zinkevich2003online}, and has been later wildly used in the machine learning community to engineer optimization procedures \cite{shalev2012online}. 
 
-Convexity plays a central role in most of the analysis made in Online Learning, and Online Convex Optimization. Convexity of the domain $\mathcal D$ and of the loss functions $f(\cdot,y)$ bound the problem geometry and let us derive simple and efficient learning procedures.
+Convexity plays a central role in most of the analysis made in Online Learning, and Online Convex Optimization. Convexity of the domain $\mathcal D$ and of the loss functions $f(\cdot,y)$ bounds the problem geometry and let us derive simple and efficient learning procedures.
 
 In this chapter the decision space $\mathcal D$ is a convex subset of $\mathbb R^N$. As in the case of uncountable experts discussed in Section \ref{sec:uncountable_exp}, the best expert is the one who plays at each round a fixed point $x\in\mathcal D$. In Section \ref{sec:stat_learning} we will discuss how this framework is well suited to optimize complex functions, as Neural Networks, where we can think as $x\in\mathcal D$ as the set of parameters we are trying to optimize. Indeed many state of the art optimization techniques in the field of machine learning have been taking inspiration from the field of Online Optimization \cite{duchi2011adaptive}.
 
@@ -342,7 +342,7 @@ The OMD algorithm for Online Convex Optimization uses the regularization given b
 \end{equation}
 \end{definition}
 
-Next we will show the idea for a general bound for the OMD algorithm, which shows the geometric ideas behind the OMD algorithm. Note that, in general, the analysis can be refined by fixing the loss function $f_t$ or the convex function $\psi$. \todo{F: questa frase invece non mi piace....direi invece
+Next we will show the idea for a general bound for the OMD algorithm, which explains the geometric ideas behind the OMD algorithm. Note that, in general, the analysis can be refined by fixing the loss function $f_t$ or the convex function $\psi$. \todo{F: questa frase invece non mi piace....direi invece
 
 It is possible to show (citazione di dove c'è il teorema)
 TEOREMA}
@@ -385,7 +385,7 @@ If $\eta_t=\eta>0$ is a constant sequence then Theorem \ref{th:regret_omd} can b
 R_T\le \frac{d_\psi(\mathbf x,\mathbf x_1)}{\eta}+\frac{\eta}{2\alpha}\sum\limits_{t=1}^T||\nabla f_t(\mathbf x_t)||^2_*.
 \end{equation}
 
-The OMD algorithm is a general technique to exploit the geometric convexity of the problem and gives rise to Hannan-consistent strategies in the case of uncountable convex decision spaces. By specializing the loss function and the Bregman divergences we can generate many algorithm that are state of the art in the Online Convex optimization problem, and achieve better theoretical guarantees than the general analysis we saw for the OMD algorithm, in fact we will show in Chapter \ref{ch:algos} that the Online Newton Step algorithm, which can be seen as an instance of the OMD algorithm, can achieve $\mathcal O(\log T)$ regret rather then $\mathcal O(\sqrt T)$ regret.
+The OMD algorithm is a general technique to exploit the geometric convexity of the problem and gives rise to Hannan-consistent strategies in the case of uncountable convex decision spaces. By specializing the loss function and the Bregman divergences we can generate many algorithms that are state of the art in the Online Convex optimization problem, and achieve better theoretical guarantees than the general analysis we saw for the OMD algorithm, in fact we will show in Chapter \ref{ch:algos} that the Online Newton Step algorithm, which can be seen as an instance of the OMD algorithm, can achieve $\mathcal O(\log T)$ regret rather then $\mathcal O(\sqrt T)$ regret.
 
 \begin{algorithm}[t!]
     \caption{OMD for Online Convex Optimization} 
@@ -405,7 +405,7 @@ The OMD algorithm is a general technique to exploit the geometric convexity of t
 
 The reason why OMD works is not that we are following the gradient, that points to the minimum of the function; indeed, the sub-gradient (Definition \ref{def:subgradient}) of a loss function does not point to the minimum in general (Figure \ref{fig_no_grad}). In practice the reason why OMD and other first order methods are effective is because of the convexity of the loss function and because of the following inequality for the instantaneous regret of convex loss functions:
 
-\begin{figure}[!h]
+\begin{figure}[!ht]
 \begin{center}
 \includegraphics[width=4in,keepaspectratio]{./img/no_grad.eps}
 \caption{Contour lines of $f(x,y)=\max\{x^2+(y-1)^2,x^2+(y+1)^2\}$, together with sub-gradient directions from $(1,0)$. All sub-gradient will point to increasing values of the function}
@@ -431,7 +431,7 @@ f^*(\mathbf \theta)=\sup\limits_{\mathbf x\in\mathbb R^N}\langle\mathbf x,\mathb
 
 Definition \ref{def:fenchel_conj} can be interpreted as a generalized $\inf$ function as $f^*(\mathbf 0)$ is the classical $inf$ function. For $\mathbf x\neq\mathbf 0$ then we are looking for the infimum of the function $f$ when the axis of the function are rotated w.r.t. the hyperplane $H(\mathbf x)=\langle\mathbf\theta,\mathbf x\rangle$, as illustrated in Figure \ref{fig:fenchel}.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
 \centering
 \input{./img/fenchel.tex}
 \caption{Fenchel Conjugate Function.}
@@ -487,7 +487,7 @@ where $\psi_\mathcal D$ is the restriction of $\psi$ to the convex set $\mathcal
 
 Theorem \ref{th:OMD_mirror} shows the real nature of the OMD algorithm, which is to up{}date predictions using the gradient of the loss function, in the dual space defined by the function $\psi$. For example if $\psi(\mathbf x)=\frac{1}{2}||\mathbf x||_2^2$ then we have $\nabla \psi(\mathbf x_t)=\mathbf x_t$ and $\nabla \psi^*(\mathbf x)=\Pi_\mathcal D(\mathbf x)$, and we obtain the Online Gradient Descent algorithm, $\mathbf x_{t+1}=\Pi_\mathcal D(\mathbf x_t-\eta_t\nabla f_t(\mathbf x_t))$, that we will explore with detail in Chapter \ref{ch:OGD}.
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
 \centering
 \input{./img/OMD_mirror.tex}
 \caption{Online Mirror Descent as Mirror Updates.}
@@ -497,7 +497,7 @@ Theorem \ref{th:OMD_mirror} shows the real nature of the OMD algorithm, which is
 
 
 \section{From Online Learning to Statistical Learning}\label{sec:stat_learning}
-Now we explore the connection between the Online Optimization framework and classical concepts of classical Statistical Learning techniques. More concretely we can prove and design a whole class of algorithm that are Agnostically PAC Learnable with Online Learning Techniques.
+Now we explore the connection between the Online Optimization framework and classical concepts of classical Statistical Learning techniques. More concretely we can prove and design a whole class of algorithms that are Agnostically PAC Learnable with Online Learning Techniques. \todo{define PAC}
 Classical statistical learning theory deals with examples (or observations) and models of the phenomena. Then it uses the model to predict the future observations~\cite{bousquet2003introduction}. Quite informally one could say that we are trying to infer concept from examples. A concept is a map $\mathcal C:\mathcal D\to\mathcal Y$, where $\mathcal D$ is the domain space and $\mathcal Y$ is the set of labels for the examples. We then observe a sample from an unknown distribution $\mathcal X$ such that $(x,y)\sim \mathcal X$. What we need to achieve is to learn a mapping $y:\mathcal D\to\mathcal Y$ such that the error under the distribution $\mathcal X$ is small. The loss function needed to define this error is not specific to the problem and can be decided by the user. This is called generalization error and, for a loss function $l:\mathcal Y\times\mathcal Y \to\mathbb R$, it is defined as:
 \begin{equation}\label{eq:generalization}
     e(h) = \mathbb E_{(x,y)\sim \mathcal X}[l(h(x),y)].
@@ -524,13 +524,13 @@ But we can weaken the concept of PAC learnability by addressing directly this is
 Determining which hypothesis spaces $\mathcal H$ are PAC learnable (agnostically or not) for specific spaces is an open and complex issue, but the case for convex hypothesis class $\mathcal H\subset\mathcal R$ can be solved by Online Learning techniques, showing the versatility of the methods. 
 Moreover, the approach to prove such theorem gives a constructive methodology to solve agnostic PAC learnable problems.
 
-\begin{theorem}\todo{cit theoreoma}
+\begin{theorem}\todo{cit theorem}
 For every hypothesis class $\mathcal H$ and bounded loss function $l:\mathcal Y\times\mathcal Y\to \mathbb R$, for which does exists a low regret algorithm $\mathcal A$, the problem is agnostic PAC learnable. In particular, these conditions are satisfied if the hypothesis space $\mathcal H$ and the loss function $l$ are convex.
 \end{theorem}
 
 \begin{proof}(Sketch).
 Initialize the learner with the hypothesis $h_0=\mathcal H$.
-For every iteration $t\le T$: observe a sample $(x_t,y_t)\sim\mathcal X$ and a loss function $l_t:=l(h_t(x_t),y_t)$. Then update the hypotesis $h_{t+1}=\mathcal A(l_1,\ldots,l_t)$.
+For every iteration $t\le T$: observe a sample $(x_t,y_t)\sim\mathcal X$ and a loss function $l_t:=l(h_t(x_t),y_t)$. Then update the hypothesis $h_{t+1}=\mathcal A(l_1,\ldots,l_t)$.
 
 At $t=T$ return $\bar{h}=\frac{1}{T}\sum\limits_{t=1}^T h_t\in\mathcal H$. 
 
