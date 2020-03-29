@@ -18,7 +18,7 @@ Instead, we discretized the simplex with $10^4$ points and used the correspondin
  SP500 & Standard Poor's 500 & 1998 - 2003 & 1276&  25\\
  \hline
 \end{tabular}
-\caption{Description of the main datasets used that common in the Online Portfolio Optimization literature.}\label{tab:dataset}
+\caption{Description of the main datasets used commonly in the Online Portfolio Optimization literature.}\label{tab:dataset}
 \end{table}
 
 Table \ref{tab:dataset} summarizes the datasets used for the experiments. All assets in the datasets are being anonymize to ensure to avoid common bias toward specific assets.
@@ -43,7 +43,7 @@ $95\%$ confidence intervals for the mean have been computed with statistical boo
 
 \subsection{Results on the NYSE(O) dataset}
 
-\begin{figure}[t!]
+\begin{figure}[ht!]
     \centering
     \subfloat[\label{fig:ex1}]{\includegraphics[width=0.48\textwidth,keepaspectratio]{img/fig_11.pdf}}
     \subfloat[\label{fig:ex2}]{\includegraphics[width=0.48\textwidth,keepaspectratio]{img/fig_12.pdf}}
@@ -57,21 +57,21 @@ The results with $\gamma = 0$ suggest that OGD might be a viable solution even i
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.80\textwidth,keepaspectratio]{img/fig_w_decay_l1.pdf}} 
+{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_w_decay_l1.pdf}} 
 \caption{Average APY computed on the wealth $W_T^C$ assuming the costs given by $C_T(\mathcal{A})$ for the NYSE(O) dataset.}
 \label{fig:wealth_decay_l1}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.80\textwidth,keepaspectratio]{img/fig_w_decay_true.pdf}} 
+{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_w_decay_true.pdf}} 
 \caption{ Average APY computed on the wealth $\tilde{W}_T(\mathcal A)$ assuming the costs given by Equation~\eqref{eq:real_tc}, for the NYSE(O) dataset.}
 \label{fig:wealth_decay_true}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.80\textwidth,keepaspectratio]{img/fig_costs.pdf}}
+{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_costs.pdf}}
 \caption{Average costs $C_T(\mathcal{A})$ with $\gamma = 1$, for the NYSE(O) dataset.}
 \label{fig:costs}
 \end{figure}
@@ -99,16 +99,58 @@ Finally, the costs of UP decrease slower than those of ONS and OGD.
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.80\textwidth,keepaspectratio]{img/fig_w_decay_l1_tse.pdf}} 
+{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_w_decay_l1_tse.pdf}} 
 \caption{Average APY computed on the wealth $W_T^C$ assuming the costs given by $C_T(\mathcal{A})$ for the TSE dataset.}
 \label{fig:wealth_decay_l1_tse}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.80\textwidth,keepaspectratio]{img/fig_w_decay_l1_sp500.pdf}} 
+{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_w_decay_l1_sp500.pdf}} 
 \caption{Average APY computed on the wealth $W_T^C$ assuming the costs given by $C_T(\mathcal{A})$ for the SP500 dataset.}
 \label{fig:wealth_decay_l1_sp500}
 \end{figure}
 
 In Figure \ref{fig:wealth_decay_l1_tse} and \ref{fig:wealth_decay_l1_sp500} present the results obtained on the TSE and SP500 datasets respectively, using the same approach we used for the NYSE(O) dataset.  The results obtained are in line with the one presented with the NYSE(O) dataset, i.e, the OGD algorithm performs better than the others for transaction rate greater than $0.003$, while it presents similar performance, in terms of APY, for smaller values of the transaction rate. Notably, in the SP500 dataset, ONS outperforms the other algorithms form small transaction rate $\gamma$, while in the TSE dataset, even for small values of the transaction rate $\gamma$, it is out-performed by the other algorithms.
+
+
+\subsection{Result on Custom Dataset}
+
+In this section we used a custom dataset to test the algorithms. The assets and time period has been choose to reflect a variety of market regimes. We are well aware that a back-testing procedure not rigid enough can lead to over-fitting and biased results, which is a important problem in the financial literature (\cite{bailey2016probability}, \cite{harvey2015backtesting}).
+Conversely to the results presented int eh previous sections, we do not claim the experiments of this section to have any scientific insight other than being illustrative of the behavior of the algorithms on the specific run presented. Nonetheless, we found interesting to present these results. 
+
+\begin{table}[ht!]\centering
+\begin{tabular}{ |c||c|c| }
+ \hline
+ \multicolumn{3}{|c|}{Custom Data (03/29/2019 - 03/29/2020)} \\
+ \hline
+ Ticker & Description & Market Category\\
+ \hline
+ SPY & SPDR S\&P 500 ETF Trust (SPY)  & Equity\\
+ BNDX &  Vanguard Bond Index Fund ETF & Fixed Income\\
+ DAX & Global X DAX Germany ETF & Equity\\
+ VIX & CBOE Volatility Index & Derivatives\\
+ \hline
+\end{tabular}
+\caption{Detailed description of the custom dataset.}\label{tab:dataset_custom}
+\end{table}
+
+Table \ref{tab:dataset_custom} gives a description of the tailored dataset. We used data for one year (from April 2019 to April 2020), including the period of December 2019 - March 2020 that shows a global decline in the global financial markets. We included two Equity indices (SPY and DAX) as a proxy for the USA markets and European markets, then we included a Bond index (BNDX) and a volatility index (VIX) that simulates a Variance Swap \cite{bossu2006introduction}.
+
+To set the parameters of ONS and OLU for the experiments performed on this dataset we used as a validation the first $1/4$ of the dataset (corresponding approximately to the first $3$ months of the dataset), performed  grid search algorithm and found picked the parameter with the highest wealth $W_T$ on the validation set. The results of the grid search are presented in Figure \ref{fig:grid}. For the OGD algorithm we set the parameter $K$ to minimize the bound according to Theorem~\ref{thm:total_regret}.
+
+\begin{figure}[ht!]
+    \centering
+    \subfloat[\label{fig:ex1}]{\includegraphics[width=0.48\textwidth,keepaspectratio]{img/grid_ONS.pdf}}
+    \subfloat[\label{fig:ex2}]{\includegraphics[width=0.48\textwidth,keepaspectratio]{img/grid_OLU.pdf}}
+\caption{Grid search for the parameters of ONS (a) and OLU (b) on the validation set of the custom dataset.} \label{fig:grid}
+\end{figure}
+
+Figure \ref{fig:wealth_custom} show the results for the algorithms run on the custom dataset. The transaction rate was set to $\gamma=0.001$ for all the algorithms. It is interesting to observe the similarity between the wealth of UP and OGD. This can be due to the particular na\"ive implementation we used for the UP algorithm. It would be interesting to observe if analytically the used  approximation of UP would result in the OGD algorithm.
+
+\begin{figure}[ht!]
+\centering
+{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/new_experiemnts_1920.pdf}} 
+\caption{Wealth $W_t$ achieved on the custom dataset described in table \ref{tab:dataset_custom}, with $\gamma=0.001$.}
+\label{fig:wealth_custom}
+\end{figure}

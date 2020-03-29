@@ -97,15 +97,16 @@
 \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{3}
 \tableofcontents
+\cleardoublepage
+
+\pagenumbering{arabic}
 
 \listoffigures
-% \listoftables
+\listoftables
 \listofalgorithms
 \addtocontents{loa}{\def\string\figurename{Algorithm}}
 
-\pagenumbering{arabic}
 \include{chapters/chapter1}
-\pagenumbering{arabic}
 \include{chapters/chapter2}
 \include{chapters/chapter3}
 \include{chapters/chapter4}
@@ -113,6 +114,7 @@
 \include{chapters/chapter6}
 \include{chapters/chapter7}
 
+\cleardoublepage
 \cleardoublepage
 
 % ---- Bibliography ----
