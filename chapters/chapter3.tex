@@ -1,27 +1,27 @@
 \chapter{Information, Prediction and Investing}\label{ch:OPO}
 
-In Chapter \ref{ch:OnlineLearning} we described at a high level the framework for Online Learning in Adversarial environment. Now we draw its connections with predictions and investments. It surely seems counter-intuitive to speak about predictions in an adversarial framework, since we are used to think about predictions only of stochastic processes, but the way to think about predictions in adversarial environments is to think about probability assignment and empirical frequencies. The roots of this formulation are to be traced back to the Bell Laboratories in the 50s, from works of Kelly \cite{kelly2011new}, linking sequential betting and concept from information theory~\cite{cover2012elements}. This connection is of paramount importance to understand sequential investing as an instance of sequential decision problem.
+In Chapter \ref{ch:OnlineLearning} we described from an high level perspective the framework for Online Learning in adversarial environment. Now we draw its connections with predictions and investments. It surely seems counter-intuitive to speak about predictions in an adversarial framework, since we are used to think about predictions only of stochastic processes, but the way to think about predictions in adversarial environments is to think about probability assignment and empirical frequencies. The roots of this formulation are to be traced back to the Bell Laboratories in the 50s, from works of Kelly \cite{kelly1956new}, linking sequential betting and concept from information theory~\cite{cover2012elements}. This connection is of paramount importance to understand sequential investing as an instance of sequential decision problem.
 We will first draw the parallelism between probability assignment over discrete events and Online Learning, and then extend the discussion to sequential investments.
 
 \section{Probability assignment}
 In this section we will draw the parallelism between assigning probabilities to outcomes, predictions, information theory and investments.  
-In the case of $N$ possible bets the decision space $\mathcal D$ is the $\Delta_{N-1}\subset \mathbb R^{N}$ probability simplex while the outcome $\mathcal Y$ space is the set $\{1,\ldots,N\}$, representing the winning bet at each turn. The loss function $f(x,y)$ should have these natural properties: low when $x_y\approx1$ and high when $x_y\approx0$, where $x_y$ is the probability assigned to the outcome $y$. The inverse log-likelihood seems a reasonable proposal, not only because of the multiplicative additive property of the logarithm, (we need the loss to be an additive quantity) but has also a deeper connection to information that we will discuss more formally in Section \ref{sec:Info}.
+In the case of $N$ possible bets the decision space $\mathcal D$ is the $\Delta_{N-1}\subset \mathbb R^{N}$ probability simplex while the outcome $\mathcal Y$ space is the set $\{1,\ldots,N\}$, representing the winning bet at each turn. The loss function $f(x,y)$ should have these natural properties: low when $x_y\approx1$ and high when $x_y\approx0$, where $x_y$ is the probability assigned to the outcome $y$. The inverse log-likelihood seems a reasonable proposal, not only because of the multiplicative additive property of the logarithm, (we need the loss to be an additive quantity) but also because it has a deeper connection to information that we will discuss more formally in Section \ref{sec:Info}.
 
 \begin{definition}(Self Information Loss).\label{def:log_loss}
-    In the sequential probability assignment problem the loss function $f(\mathbf x,y)$, $\mathbf x\in \Delta_{N-1}$ and $y\in[1,\ldots,N]$ is defined as
+    In the sequential probability assignment problem the loss function $f(\mathbf x,y)$, $\mathbf x\in \Delta_{N-1}$ and $y\in[1,\ldots,N]$ is defined as:
     $$f(\mathbf x,y)=-\log\left(x^{(y)}\right),$$
 where $x^{(y)}$ is the probability assigned to outcome $y\in\mathcal Y$.
 \end{definition}
 
 In the case of simulable experts, the prediction $\mathbf x_t$ of the agent is a function of the history of outcomes $y^{t-1}:=\{y_1,y_2,\ldots,y_{t-1}\}$.
 
-The cumulative loss for the agent $\mathcal A$ is then given by 
+The cumulative loss for the agent $\mathcal A$ is then given by:
 
 \begin{equation}
 L_T=\prod\limits_{t=1}^T f(\mathbf x_t,y_t),
 \end{equation}
 
-and can be interpreted as the log-likelihood assigned to the outcome sequence $y^T$ since 
+and can be interpreted as the log-likelihood assigned to the outcome sequence $y^T$ since:
 \begin{equation}\label{eq:loss_log}
 L_T=\sum\limits_{t=1}^Tf(\mathbf x_t,y_t)=-\log\left(\prod\limits_{t=1}^T x_t^{(y_t)}\right),
 \end{equation}
@@ -34,7 +34,7 @@ Similarly we can define the loss for an expert $e\in\mathcal E$ as:
 L_{e,T}=\sum\limits_{t=1}^Tf(\mathbf x_{e,t},y_t)=-\log\left(\prod\limits_{t=1}^Tx_{e,t}^{(y_t)}\right),
 \end{equation}
 
-and the regret for each expert $e\in\mathcal E$ is defined as 
+and the regret for each expert $e\in\mathcal E$ is defined as:
 \begin{equation}
 R_{e,T}=L_T-L_{e,T}=\log\left(\prod\limits_{t=1}^Tx_{t,e}^{(y_t)}\bigg/\prod\limits_{t=1}^Tx_t^{(y_t)}\right),
 \end{equation}
@@ -47,7 +47,7 @@ R_{T}=\sup\limits_{e\in\mathcal E}\log\left(\prod\limits_{t=1}^Tx_{t,e}^{(y_t)}\
 
 where the class of experts $\mathcal E$ can be finite or uncountable.
 
-Moreover, the self information loss defined in Definition \ref{def:log_loss}, is clearly exp concave with coefficient $\nu=1$ as defined in Chapter \ref{ch:OnlineLearning}, and we know that we have $R_T\le\log(N)$ in the case of finite experts and $R_T\le N(\log(T/N)+1)$ in the case of uncountable experts, by Theorem \ref{th:mixture_forecaster}. The case of the expert class being identified with the simplex $\Delta_{N-1}$ can be interpreted as a convex hull of experts and so the Theorem \ref{th:mixture_forecaster} gives a $R_T=\mathcal O(\log T)$ regret bound on the problem of probability assignment described in the previous section.
+Moreover, the self information loss defined in Definition \ref{def:log_loss}, is clearly exp-concave with coefficient $\nu=1$ as defined in Chapter \ref{ch:OnlineLearning}, and we know that we have $R_T\le\log(N)$ in the case of finite experts and $R_T\le N(\log(T/N)+1)$ in the case of uncountable experts, by Theorem \ref{th:mixture_forecaster}. The case of the expert class being identified with the simplex $\Delta_{N-1}$ can be interpreted as a convex hull of experts and so the Theorem \ref{th:mixture_forecaster} gives a $R_T=\mathcal O(\log T)$ regret bound on the problem of probability assignment described in the previous section.
 
 \subsection{Laplace Mixture Forecaster}\label{sec:laplace_mixture}
 
@@ -61,43 +61,43 @@ and it is called Laplace Mixture Forecaster \cite{weinberger1994optimal}. The im
 
 The link between sequential predictions and information theory has been observed in \cite{kelly2011new}, and connects the concept of sequential betting (or predictions) and entropy.
 
-Kelly put himself in a setting where the bettor has to predict the outcomes of binary events, given private information from an \emph{information channel} prone to errors. The binary bet pays double for a correct prediction and zero for an incorrect one. The input bits of the information channel are the correct outcomes of the binary sequential event, but they reach the end of the private channel with probability $p$ of being correct and $q=1-p$ of being wrong. Clearly the optimal strategy with $p=1$ is to bet everything on each turn reaching a final wealth, after $T$ rounds, of $V_T=2^T$. In case $p<1$ it is not clear which strategy is the best to follow, this is clearly related and still under philosophical debate as the St. Petersburg paradox \cite{samuelson1977st}. Kelly proposed to maximize the grow rate of the wealth by investing a constant fraction of the current wealth. The growth rate $G$ of the wealth $V_T$ is defined as 
-$$G=\lim\limits_{T\to+\infty}\frac{1}{T}\log_2(V_T).$$
+Kelly put himself in a setting where the bettor has to predict the outcomes of binary events, given private information from an \emph{information channel} prone to errors. The binary bet pays double for a correct prediction and zero for an incorrect one. The input bits of the information channel are the correct outcomes of the binary sequential event, but they reach the end of the private channel with probability $p$ of being correct and $q=1-p$ of being wrong. Clearly the optimal strategy with $p=1$ is to bet everything on each turn reaching a final wealth, after $T$ rounds, of $W_T=2^T$. In case $p<1$ it is not clear which strategy is the best to follow, this is clearly related and still under philosophical debate as the St. Petersburg paradox \cite{samuelson1977st}. Kelly proposed to maximize the growth rate of the wealth by investing a constant fraction of the current wealth. The growth rate $G$ of the wealth $W_T$ is defined as:
+$$G=\lim\limits_{T\to+\infty}\frac{1}{T}\mathbb E[\log_2(W_T)].$$
 
-Calling $l\in[0,1]$ the fraction of the wealth invested in the bet we have a capital after $T$ rounds of 
-$$V_T=(1+l)^{W}(1-l)^{T-W},$$ 
+Calling $v\in[0,1]$ the fraction of the wealth invested in the bet we have a capital after $T$ rounds of:
+$$W_T=(1+v)^{T-F}(1-v)^{F},$$ 
 
-and the associated growth rate becomes: 
-$$G=p\log_2(1+l)+q\log_2(1-l),$$
+where $F$ is the number of lost bets up to time $T$. Thus, the expected growth rate becomes of $W_T$: 
+$$G=p\log_2(1+v)+q\log_2(1-v),$$
 
-which is maximized for $l=p-q$ giving $G_{\max}=1+p\log_2(p)+q\log_2(q)$ which is the rate of transmission for the communication channel, \emph{i.e.} the number of bits transferred for unit of time. This is the trivial case and can be extended to arbitrary odds and number of bets.
+which is maximized for $v=p-q$ giving $G_{\max}=1+p\log_2(p)+q\log_2(q)$ which is the rate of transmission for the communication channel, \emph{i.e.}, the number of bits transferred for unit of time. This is the trivial case and can be extended to arbitrary odds and number of bets.
 
-The equivalent formulation in Online Learning can be obtained by observing that $\mathcal D=\Delta_0$ and that we are betting a fraction $l_t$ on the event being $0$ and a fraction $1-l_t$ on the the outcome being $1$. In that case the wealth at time $t$ will be $V_t=V_{t-1}l_t^{1-y_t}(1-l_t)^{y_t}$ and hence: 
+The equivalent formulation in Online Learning can be obtained by observing that $\mathcal D=\Delta_0$ and that we are betting a fraction $v_t$ on the event being $0$ and a fraction $1-v_t$ on the the outcome being $1$. In that case the wealth at time $t$ will be $W_t=W_{t-1}v_t^{1-y_t}(1-v_t)^{y_t}$ and, hence: 
 
 \begin{equation}
-log(V_T)=\sum\limits_{t=1}^T\log(l_t(y_t-1)+(1-l_t)y_t),
+log(W_T)=\sum\limits_{t=1}^T\log(v_t(y_t-1)+(1-v_t)y_t),
 \end{equation}
 
 which defines the cumulative loss 
-$$L_T=-log(V_T)=\sum\limits_{t=1}^T-\log(l_t(1-y_t)+(1-l_t)y_t),$$
+$$L_T=-log(W_T)=\sum\limits_{t=1}^T-\log(v_t(1-y_t)+(1-v_t)y_t),$$
 which is equivalent to the loss defined in Equation \eqref{eq:loss_log}.
 
-By defining the growth rate at $T$ as $G_T=\frac{1}{T}\log_2(V_T)$ we can observe that $L_T=TG_T\log(2)$ and so a learner $\mathcal A$ that obtains sub-linear regret $R_T/T\to0$, where the expert class is composed of constant experts for which $l_t=const$, is equivalent to obtaining a growth rate $G_T\to G_{\max}$.
+By defining the growth rate as $G_T=\frac{1}{T}log_2(W_T)$, we can observe that $L_T=-TG_T\log(2)$, and so a learner $\mathcal A$ that obtains sub-linear regret $R_T/T\to0$, where the expert class is composed of constant experts for which $v_t=const$, is equivalent to obtaining a growth rate $G_T\to G_{\max}$.
 
-This draws the connection to information rate as defined by Shannon in terms of information bits and growth rate of a betting strategy, and the fact that an Hannan-consistent strategy is able to converge to the highest growth rate. 
+This draws the connection to information rate as defined by Shannon in terms of information bits and growth rate of a betting strategy, and the fact that an Hannan-consistent strategy is able to converge to the maximum growth rate. 
 
 \subsection{Horse Races}
 
 In this section we will see how sequential investment is equivalent to the problem of sequential betting discussed in the previous section.
 In the previous chapter we saw how to formalize sequential betting in the simple case of doubling odds and binary outcomes into the Online Learning formulation. Now we will extend the model to account variable odds and multiple bets, and how this is connected to investing.
 
-Let us model horse races as a sequential betting process, in which we have $N$ horses each paying a payoff of $o_{t,i}\ \forall i\in 1,\ldots,N$. The agent $\mathcal A$ splits its wealth into $N$ separate betting by choosing an element of the simplex $\Delta_{N-1}$.
+Let us model horse races as a sequential betting process, in which we have $N$ horses each paying a payoff of $o_{t,i}\ \forall i\in \{1,\ldots,N\}$. The agent $\mathcal A$ splits its total wealth into $N$ separate bets by choosing an element of the simplex $\Delta_{N-1}$.
 
-The wealth of the agent $\mathcal A$ at time $t$ will be the $V_t=V_{t-1}\langle \mathbf x_t, \mathbf y_t \rangle$, where $\mathbf y_t=o_{y_t}\mathbf e_{y_t}\in\mathbb R^N$, \emph{i.e.} the basis vector with $1$ as the $y_t\in1,\ldots,N$ component, which represents the winning horse for the turn, and $o_{y_t}$ is the payout of the bet at time $t$, on the $t_y$ horse winning. As we did in the previous section we can apply $-\log(\cdot)$ so that we can embed the problem into an Online Learning framework. By defining 
+The wealth of the agent $\mathcal A$ at time $t$ will be $W_t=W_{t-1}\langle \mathbf x_t, \mathbf y_t \rangle$, where $\mathbf y_t=o_{y_t}\mathbf e_{y_t}\in\mathbb R^N$, \emph{i.e.}, the basis vector with $1$ as the $y_t\in\{1,\ldots,N\}$ component, which represents the winning horse for the turn, and $o_{y_t}$ is the payout of the bet at time $t$, on the $y_t$ horse winning. As we did in the previous section we can apply $-\log(\cdot)$ so that we can embed the problem into an Online Learning framework. By defining: 
 
-$$L_T=-\log(V_T)=-\log(V_{T-1})-\log(\langle \mathbf x_t,\mathbf y_t\rangle),$$
+$$L_T=-\log(W_T)=-\log(W_{T-1})-\log(\langle \mathbf x_t,\mathbf y_t\rangle),$$
 
-that implies 
+that implies:
 \begin{equation}\label{eq:log_loss_hr}
 L_T=\sum\limits_{t=1}^T-\log(\langle \mathbf x_t,\mathbf y_t\rangle),
 \end{equation}
@@ -105,7 +105,7 @@ L_T=\sum\limits_{t=1}^T-\log(\langle \mathbf x_t,\mathbf y_t\rangle),
 we obtain exactly the same formulation presented at the beginning of the chapter. Moreover, we note that the regret $R_T$ does not 
 depend on the value of the payout $o_{y_t}$. 
 
-We saw in Section~\ref{sec:uncountable_exp} that Theorem~\ref{th:mixture_forecaster} assures that we have a sub-linear regret $R_T=\mathcal O(\log T)$ in case that the expert class $\mathcal E$ is being generated by the convex hull of finite basic experts $\mathcal E_N$, which in this case can be taken as the $N$ experts always predicting $\mathbf x_{t,j}=\mathbf e_j, \forall j\in 1,\ldots,N$. The convex hull generated by $\mathcal E_N$ is then composed by experts predicting a constant element of the simplex $\mathbf x_{t,e}=\mathbf x_e\in \Delta_{N-1}$. 
+We saw in Section~\ref{sec:uncountable_exp} that Theorem~\ref{th:mixture_forecaster} assures that we have a sub-linear regret $R_T=\mathcal O(\log T)$ in case that the expert class $\mathcal E$ is being generated by the convex hull of finite basic experts $\mathcal E_N$, which in this case can be taken as the $N$ experts always predicting $\mathbf x_{t,j}=\mathbf e_j, \forall j\in\{1,\ldots,N\}$. The convex hull generated by $\mathcal E_N$ is then composed by experts predicting a constant element of the simplex $\mathbf x_{t,e}=\mathbf x_e\in \Delta_{N-1}$. 
 
 Theorem~\ref{th:mixture_forecaster} is stating that we can obtain asymptotic wealth equivalent to the one obtained by the best expert in hindsight, for all sequences of outcomes. 
 
@@ -113,19 +113,19 @@ A very similar formulation can be obtained for the case of sequential investment
 
 \section{From Horse Races to Online Portfolio Optimization}\label{sec:from_horse_to_ptf}
 
-We can formulate the portfolio allocation as a sequential betting problem. Let us imagine that there are no real life issues associated with trading costs and liquidity (this issues will be discussed in the following Chapter \ref{ch:transaction_costs}). Then the best strategy would be to invest at each round $t$ the entire capital on one single stock, knowing that will be the best performance stock at round $t$. But assuming an adversarial environment we have to randomize our bet, or equivalently distribute our wealth into the $N$ horses accordingly to our randomization probabilities, as they are equivalent under Equation \eqref{eq:log_loss_hr}. 
+We can formulate the portfolio allocation as a sequential betting problem. Let us imagine that there are no real life issues associated with trading costs and liquidity (this issues will be discussed in the following Chapter \ref{ch:transaction_costs}). Then the best strategy would be to invest at each round $t$ the entire capital on one single stock, knowing that will be the best performance stock at round $t$. But assuming an adversarial environment we have to randomize our bet, or equivalently distribute our wealth into the $N$ horses accordingly to our randomization probabilities, as they are equivalent as Equation \eqref{eq:log_loss_hr} explains. 
 
 \subsection{The Online Portfolio Optimization Model}
 
-The model consists in a sequential wealth allocation in $N\in\mathbb N$ stocks for discrete rounds $t\in\{1,\ldots,T\}$, where $T$ is the investment horizon. Note that the set of times is arbitrary, and could also be non-homogeneous, in practice in the Online Portfolio Optimization case, it is usually thought to be in days. The evolution of the stock $i\in 1,\ldots,N$ prices at time $t$, $P_{t,i}$, define the price relatives $y_{i,t}=\frac{P_{i,t+1}}{P_{i,t}}$, and we can define the price relative vector at time $t$ as $\mathbf y_t=(y_{1,t},\ldots,y_{N,t})\in\mathbb R^N$. 
+The model consists in a sequential wealth allocation in $N\in\mathbb N$ stocks for discrete rounds $t\in\{1,\ldots,T\}$, where $T$ is the investment horizon. Note that the set of times is arbitrary, and could also be non-homogeneous, in practice in the Online Portfolio Optimization case it is usually thought to be in days. The price evolution of the stock $i\in 1,\ldots,N$ at time $t$, $P_{t,i}$, defines the price relatives $y_{i,t}=\frac{P_{i,t+1}}{P_{i,t}}$, and we can define the price relatives vector at time $t$ as $\mathbf y_t=(y_{1,t},\ldots,y_{N,t})\in\mathbb R^N$. 
 
-An investor dividing, at round $t$, its wealth $W_t$ into a fraction $\mathbf x_t\in\Delta_{N-1}$ for each asset will get a wealth $W_{t+1}=W_t\langle \mathbf x_t,\mathbf y_t\rangle$ at round $t+1$. As in Section \ref{sec:Info} we can define the growth rate 
+An investor dividing, at round $t$, its wealth $W_t$ into a fraction $\mathbf x_t\in\Delta_{N-1}$ for each asset will get a wealth $W_{t+1}=W_t\langle \mathbf x_t,\mathbf y_t\rangle$ at round $t+1$. As in Section \ref{sec:Info} we can define the growth rate for portfolios as:
 $$G_T=\log(W_T)=\sum\limits_{t=1}^T\log(\langle\mathbf x_t, \mathbf y_t\rangle).$$
 
-As in the case of binary outcomes, \emph{i.e.} horse races, we can redefine the problem in an Online Learning framework, by defining the loss $f(\mathbf x,\mathbf y)=-\log(\langle\mathbf x_t, \mathbf y_t\rangle)$ and a cumulative loss as 
+As in the case of binary outcomes, \emph{i.e.}, horse races, we can redefine the problem in an Online Learning framework, by defining the loss $f(\mathbf x,\mathbf y)=-\log(\langle\mathbf x_t, \mathbf y_t\rangle)$ and a cumulative loss as: 
 $$L_T=-G_T=\sum\limits_{t=1}^T-\log(\langle\mathbf x_t,\mathbf y_t\rangle).$$
 
-Exactly as in the previous Section, the expert class is generated by the convex hull of the base class $\mathcal E_N$, composed by the experts always betting on the win of the same horse $i\in1,\ldots,N$, or, equivalently, allocating all the portfolio on the same asset, at every round. The convex hull of the class is the class of experts $\mathcal E$, so that at every turn $t$, the expert is allocating all the wealth in a specific element $\mathbf x\in\Delta_{N-1}$. In the Online Portfolio literature this class of allocations is called \emph{Constant Rebalancing Portfolio} (CRP), and we will define its wealth as $W_T(\mathbf x)=W_0\prod\limits_{t=1}^T\langle\mathbf x,\mathbf y_t\rangle$.
+Exactly as in the previous Section, the expert class is generated by the convex hull of the base class $\mathcal E_N$, composed by the experts always betting on the win of the same horse $i\in\{1,\ldots,N\}$, or, equivalently, allocating the whole portfolio on the same asset, at every round. The convex hull of the class is the class of experts $\mathcal E$, so that at every turn $t$, the expert is allocating the whole wealth in a specific element $\mathbf x\in\Delta_{N-1}$. In the Online Portfolio literature this class of allocations is called \emph{Constant Rebalancing Portfolio} (CRP), and we will define its wealth as $W_T(\mathbf x)=W_0\prod\limits_{t=1}^T\langle\mathbf x,\mathbf y_t\rangle$.
 
 As in every adversarial environment, we have to compare our losses with the best expert in the expert class through the concept of regret:
 
@@ -135,22 +135,18 @@ R_T&=L_T-\inf\limits_{e\in \mathcal E}L_{T,e}\\
 \end{align}
 
 The CRP attaining the minimum loss 
-$$\mathbf x^*=\inf\limits_{\mathbf x \in \Delta_{N-1}}\sum\limits_{t=1}^T-\log(\langle\mathbf x,\mathbf y_t\rangle).$$
+$$\mathbf x^*=\inf\limits_{\mathbf x \in \Delta_{N-1}}\sum\limits_{t=1}^T-\log(\langle\mathbf x,\mathbf y_t\rangle)$$
 is called \emph{Best Constant Rebalancing Portfolio} (BCRP).
 
 As we shall see in the next section, Constant Rebalancing Portfolios (CRP) are a very powerful class of strategies and being competitive (in terms of sub-linear regret) with respect to this class assures good theoretical guarantees. 
 
 \subsection{Effectiveness of Constant Rebalancing Portfolios}\label{sec:OPO}
 
-The CRP is a strategy that each round $t$ redistributes its wealth into the same distribution $\mathbf x\in\Delta_{N-1}$. As we saw in the previous Section this strategies can be identified as the ones generated by expert class $\mathcal E$ defined previously.
-The Buy and Hold (BAH) is a strategy that holds on an allocation at the start of the investment period and hold on to it to the end of the investment horizon $T$. The wealth of an BHA strategy can be written as $W_T=\langle\mathbf x, \prod_{t=1}^T \mathbf y_t\rangle$.
+The CRP is a strategy that each round $t$ redistributes its wealth into the same distribution $\mathbf x\in\Delta_{N-1}$. As we saw in the previous Section these strategies can be identified as the ones generated by expert class $\mathcal E$ defined previously.
+The Buy and Hold (BAH) is a strategy that holds on an allocation at the start of the investment period and holds on to it to the end of the investment horizon $T$. The wealth of an BHA strategy can be written as $W_T=\langle\mathbf x, \prod_{t=1}^T \mathbf y_t\rangle$.
 
 A simple example can illustrate the effectiveness of the CRP strategies, and the inherently difference that exists between the Modern Portfolio Theory and the Online Portfolio Optimization techniques.
-Imagine to have two stocks, and the adversary can choose the value of the price relatives in the set: $y_{1,t},y_{2,t}\in\left\{\frac{3}{5},\frac{8}{5}\right\}$. Imagine that the adversary picks a price relative in the set $\left\{\frac{3}{5},\frac{8}{5}\right\}$ with equal probability. Every BHA allocation is exponentially decaying $\mathbb E[W_T]=\langle \mathbf x, (\frac{24}{25},\frac{24}{25})\rangle=\frac{24}{25}$ and hence has decaying growth rate $G_T<0$. Conversely, the equally allocated CRP $\mathbf x=(\frac{1}{2},\frac{1}{2})$ has positive growth rate and exponentially increasing wealth: $\mathbb E[W_T]=(11/10)^T$ and $G_T=T\log(11/10)>0$.
+Imagine to have two stocks, and the adversary can choose the value of the price relatives in the set: $y_{1,t},y_{2,t}\in\left\{\frac{3}{5},\frac{8}{5}\right\}$. Imagine that the adversary picks a price relatives in the set $\left\{\frac{3}{5},\frac{8}{5}\right\}$ with equal probability. Every BHA allocation is exponentially decaying $\mathbb E[W_T]=\langle \mathbf x, (\frac{24}{25},\frac{24}{25})\rangle=\frac{24}{25}$ and hence has decaying growth rate $G_T<0$. Conversely, the equally allocated CRP $\mathbf x=(\frac{1}{2},\frac{1}{2})$ has positive growth rate and exponentially increasing wealth: $\mathbb E[W_T]=(11/10)^T$ and $G_T=T\log(11/10)>0$.
 
-Historically, this example has been called Shannon Demon \cite{poundstone2010fortune} and being compared to the Maxwell's Demon since, as in the thermodynamics case, Shannon's Demon is generating wealth (energy in the case on Maxwell) from nothing since both stocks are martingales, and opponents to the Capital Growth Theory, used this argument to invalidate this ideas. In reality there is nothing strange about this example, and it is just one of the many techniques that exploits the existence of volatility and converts it into wealth, as theoretically does a delta-hedged option in the Black and Scholes model~\cite{black1973pricing}.
-
-% \section{Other Applications of Online Learning in Financial Applications}
-
-% There are other applications of Online Learning in Finance other than Online Portfolio Optimization. Recently it was used in Market Making \cite{abernethy2013adaptive} and in Robust Option Pricing \cite{demarzo2016robust}.
-% In Market Making the investor can offer a quantity $q_b$ of stocks to buy at a price $p_b$ and to sell a quantity $q_a$ at a price $p_a$. The 
+Historically, this example has been called Shannon Demon \cite{poundstone2010fortune} and being compared to the Maxwell's Demon since, as in the thermodynamics case, Shannon's Demon is generating wealth (energy in the case on Maxwell) from nothing since both stocks are martingales. 
+Opponents to the Capital Growth Theory used this argument to invalidate these ideas. In reality there is nothing strange about this example, and it is just one of the many techniques that exploits the existence of volatility and converts it into wealth, as theoretically does a delta-hedged option in the Black and Scholes model~\cite{black1973pricing}.
