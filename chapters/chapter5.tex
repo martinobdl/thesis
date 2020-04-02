@@ -4,14 +4,14 @@ In this section we will review the state of the art algorithms for the Online Po
 
 The setting is the one described in Section \ref{sec:OPO}, in particular $\Delta=\Delta_{N-1}\subset \mathbb R^N$ is the $N$-simplex, and an element $\mathbf x_t\in\Delta$ describes the allocation over $N$ stocks for the $t$-th period.
 
-As is commonly done in the portfolio allocation literature~\cite{agarwal2006algorithms}, we assume that the price of the assets does not change too much during two consecutive rounds, formally:
+As is commonly done in the portfolio allocation literature~\cite{agarwal2006algorithms}, we assume that the price of the assets does not change too much during two consecutive rounds, or formally:
 
 \begin{assumption} \label{ass:nojunk}
     %  Given the OPO framework, 
      There exist two finite constants $\epsilon_l, \epsilon_u \in \mathbb{R}^+$ s.t.~the price relatives~$y_{j,t} \in [\epsilon_l, \epsilon_u]$, with $0 < \epsilon_l \leq \epsilon_u < +\infty$, for each round $t \in \{ 1, \ldots, T \}$ and each asset $j \in \{1, \ldots, N \}$.
 \end{assumption}
 
-Notice that under Assumption~\ref{ass:nojunk} it is possible to bound the $L_1$, $L_2$ and the $L_\infty$ gradient of the loss as follows:
+Notice that, under Assumption~\ref{ass:nojunk}, it is possible to bound the $L_1$, $L_2$ and the $L_\infty$ gradient of the loss as follows:
 
 \begin{equation} \label{eq:bounded_gradient_1}
     ||\nabla \log (\langle \mathbf{x}_t, \mathbf{y}_t) \rangle||_1 \leq \frac{N\epsilon_u}{\epsilon_l}:=G_1,

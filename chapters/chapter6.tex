@@ -28,13 +28,7 @@ The definition of the OGD update rule for a generic convex loss function $f_t(\m
   \mathbf{x}_{t+1} = \Pi_{\mathcal D} \left( \mathbf{x}_t - \eta_t \nabla f_t(\mathbf{x}_t) \right),
 \end{equation}
 where $\Pi_{\mathcal D} (y) := \arginf\limits_{x \in \mathcal D } || y - x ||_2^2$ is the standard projection of the vector $y$ onto $\mathcal D$, $\eta_t > 0$ is the learning rate at round $t$.
-Recalling that in the Online Portfolio Optimization framework the function to be minimized is the loss $f_t(\mathbf{x}_t) = -\log (\langle \mathbf{x}_t, \mathbf{y}_t \rangle )$, the portfolio update rule becomes:
-\begin{equation} \label{eq:OGD_port}
-   \mathbf{x}_{t+1}= \Pi_{\Delta_{N-1}}\left( \mathbf{x}_t+\eta_t \frac{\mathbf{y}_t}{\langle \mathbf{x}_t, \mathbf{y}_t \rangle}\right).
-\end{equation}
-The pseudo-code corresponding to the OGD algorithm is presented in Algorithm~\ref{alg:OGD_in_OPO}. 
-The algorithm starts with a portfolio $\mathbf{x}_1$ equally allocated among the $N$ available assets (Line~\ref{line:init_OGD}).
-Then, for each round $t \in \{ 1, \ldots, T \}$ it rebalances the assets according to Equation~\eqref{eq:OGD_port}, observes the market outcomes $\mathbf{y}_{t+1}$ (Line~\ref{line:out}), and gains a per-round wealth, including costs, of $\log(\langle \mathbf{y}_{t+1},\mathbf{x}_{t+1} \rangle) - \gamma|| \mathbf{x}_{t+1} - \mathbf{x}_{t} ||_1$ (Line~\ref{line:wealth}). The projection in Line \ref{line:line_projection_OGD}, can be implemented very efficiently as we will discuss in Section \ref{sec:implementation} with Algorithm \ref{alg:projection}.
+This procedure is also reported in Figure \ref{fig:OGD}, where the point $\mathbf x_t$ is updated to $\mathbf z_t$, by the gradient of the loss, and then it gets projected onto the convex set $\mathcal D$ into the point $\mathbf x_t$.
 
 \begin{figure}[ht!]
 \centering
@@ -43,21 +37,20 @@ Then, for each round $t \in \{ 1, \ldots, T \}$ it rebalances the assets accordi
 \label{fig:OGD}
 \end{figure}
 
+Recalling that in the Online Portfolio Optimization framework the function to be minimized is the loss $f_t(\mathbf{x}_t) = -\log (\langle \mathbf{x}_t, \mathbf{y}_t \rangle )$, the portfolio update rule becomes:
+\begin{equation} \label{eq:OGD_port}
+   \mathbf{x}_{t+1}= \Pi_{\Delta_{N-1}}\left( \mathbf{x}_t+\eta_t \frac{\mathbf{y}_t}{\langle \mathbf{x}_t, \mathbf{y}_t \rangle}\right).
+\end{equation}
+The pseudo-code corresponding to the OGD algorithm is presented in Algorithm~\ref{alg:OGD_in_OPO}. 
+The algorithm starts with a portfolio $\mathbf{x}_1$ equally allocated among the $N$ available assets (Line~\ref{line:init_OGD}).
+Then, for each round $t \in \{ 1, \ldots, T \}$ it rebalances the assets according to Equation~\eqref{eq:OGD_port}, observes the market outcomes $\mathbf{y}_{t+1}$ (Line~\ref{line:out}), and gains a per-round wealth, including costs, of $\log(\langle \mathbf{y}_{t+1},\mathbf{x}_{t+1} \rangle) - \gamma|| \mathbf{x}_{t+1} - \mathbf{x}_{t} ||_1$ (Line~\ref{line:wealth}). The projection in Line \ref{line:line_projection_OGD}, can be implemented very efficiently as we will discuss in Section \ref{sec:implementation} with Algorithm \ref{alg:projection}.
+
 Note that OGD is an instance of the OMD algorithm described in Section \ref{sec:OMD}, with $\psi(\mathbf x)=||\mathbf x||_2^2$. Indeed the general update Equation \eqref{eq:OGD_general} is equivalent to:
 
 \begin{align}
 	\mathbf x_{t+1}&=\arginf\limits_{\mathbf x\in\Delta}||\mathbf x-\mathbf x_t+\eta_t\nabla f_t(\mathbf x_t)||_2^2\\
 	&=\arginf\limits_{\mathbf x\in\Delta}\left(||\mathbf x-\mathbf x_t||_2^2+\eta_t^2||\nabla f_t(\mathbf x_t)||_2^2+2\langle\nabla f_t(\mathbf x_t),\mathbf x-\mathbf x_t\rangle\right).
 \end{align}
-
-\begin{figure}[ht!]
-\centering
-\input{./img/pitagora.tex}
-\caption{Generalized Pythagorean Theorem.}
-\label{fig:pitagora}
-\end{figure}
-
-\vspace{1cm}
 
 Moreover the following lemma is paramount to prove the regret bound for OGD. This lemma establishes the non expansiveness of the projection operator $\Pi_\Delta$:
 
@@ -70,7 +63,14 @@ Let $\mathcal D\in\mathbb R^N$ a convex set, and $A\in\mathbb R^{N\times N}$ a s
 where $\mathbf z=\Pi_{\mathcal D}^A(\mathbf x)=\arginf\limits_{\mathbf y\in\mathcal D}\langle\mathbf y-\mathbf x,A(\mathbf y-\mathbf x)\rangle$.
 \end{lemma}
 
-In the case of $A=\mathbb I_{N\times N}$, being $\mathbb I_{N\times N}$ the identity matrix in $\mathbb R^{N\times N}$, we have that $||\Pi_\mathcal D(\mathbf x)-\mathbf x_0||_2^2\le||\mathbf x-\mathbf x_0||_2^2$. Hence, the operator $\Pi_\Delta:\mathbb R^N\to\mathcal D$ is non-expansive. In Figure \ref{fig:pitagora} is represented Lemma \ref{lemma:non_expansive}.
+In the case of $A=\mathbb I_{N\times N}$, being $\mathbb I_{N\times N}$ the identity matrix in $\mathbb R^{N\times N}$, we have that $||\Pi_\mathcal D(\mathbf x)-\mathbf x_0||_2^2\le||\mathbf x-\mathbf x_0||_2^2$. Hence, the operator $\Pi_\Delta:\mathbb R^N\to\mathcal D$ is non-expansive. In Figure \ref{fig:pitagora} we show that the projection $\Pi_\mathcal D^A(\mathbf x)$ is the closest (in terms of the metric induced by the matrix $A$) to any point $\mathbf x_0\in\mathcal D$.
+
+\begin{figure}[ht!]
+\centering
+\input{./img/pitagora.tex}
+\caption{Generalized Pythagorean Theorem.}
+\label{fig:pitagora}
+\end{figure}
 
 \section{Regret Analysis}
 

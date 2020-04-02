@@ -46,8 +46,8 @@ $95\%$ confidence intervals for the mean have been computed with statistical boo
 
 \begin{figure}[ht!]
     \centering
-    \subfloat[\label{fig:ex1}]{\includegraphics[width=0.48\textwidth,keepaspectratio]{img/fig_11.pdf}}
-    \subfloat[\label{fig:ex2}]{\includegraphics[width=0.48\textwidth,keepaspectratio]{img/fig_12.pdf}}
+    \subfloat[\label{fig:ex1}]{\includegraphics[width=0.55\textwidth,keepaspectratio]{img/fig_11.pdf}}
+    \subfloat[\label{fig:ex2}]{\includegraphics[width=0.55\textwidth,keepaspectratio]{img/fig_12.pdf}}
 \caption{Wealth $W_T^C(\mathcal{A})$ on two runs of the NYSE(O) for $\gamma = 0$ (a), and $\gamma = 0.001$ (b).} \label{fig:algo_copmarison}
 \end{figure}
 
@@ -58,21 +58,21 @@ The results with $\gamma = 0$ suggest that OGD might be a viable solution even i
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_w_decay_l1.pdf}} 
+{\includegraphics[width=0.75\textwidth,keepaspectratio]{img/fig_w_decay_l1.pdf}} 
 \caption{Average APY computed on the wealth $W_T^C$ assuming the costs given by $C_T(\mathcal{A})$ for the NYSE(O) dataset.}
 \label{fig:wealth_decay_l1}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_w_decay_true.pdf}} 
+{\includegraphics[width=0.75\textwidth,keepaspectratio]{img/fig_w_decay_true.pdf}} 
 \caption{ Average APY computed on the wealth $\tilde{W}_T(\mathcal A)$ assuming the costs given by Equation~\eqref{eq:real_tc}, for the NYSE(O) dataset.}
 \label{fig:wealth_decay_true}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_costs.pdf}}
+{\includegraphics[width=0.75\textwidth,keepaspectratio]{img/fig_costs.pdf}}
 \caption{Average costs $C_T(\mathcal{A})$ with $\gamma = 1$, for the NYSE(O) dataset.}
 \label{fig:costs}
 \end{figure}
@@ -100,14 +100,14 @@ Finally, the costs of UP decrease slower than those of ONS and OGD.
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_w_decay_l1_tse.pdf}} 
+{\includegraphics[width=0.75\textwidth,keepaspectratio]{img/fig_w_decay_l1_tse.pdf}} 
 \caption{Average APY computed on the wealth $W_T^C$ assuming the costs given by $C_T(\mathcal{A})$ for the TSE dataset.}
 \label{fig:wealth_decay_l1_tse}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/fig_w_decay_l1_sp500.pdf}} 
+{\includegraphics[width=0.75\textwidth,keepaspectratio]{img/fig_w_decay_l1_sp500.pdf}} 
 \caption{Average APY computed on the wealth $W_T^C$ assuming the costs given by $C_T(\mathcal{A})$ for the SP500 dataset.}
 \label{fig:wealth_decay_l1_sp500}
 \end{figure}
@@ -143,25 +143,27 @@ To set the parameters of ONS and OLU for the experiments performed on this datas
 
 \begin{figure}[ht!]
     \centering
-    \subfloat[\label{fig:grdid_ONS}]{\includegraphics[width=0.48\textwidth,keepaspectratio]{img/grid_ONS.pdf}}
-    \subfloat[\label{fig:grid_OLU}]{\includegraphics[width=0.48\textwidth,keepaspectratio]{img/grid_OLU.pdf}}
+    \subfloat[\label{fig:grdid_ONS}]{\includegraphics[width=0.50\textwidth,keepaspectratio]{img/grid_ONS.pdf}}
+    \subfloat[\label{fig:grid_OLU}]{\includegraphics[width=0.50\textwidth,keepaspectratio]{img/grid_OLU.pdf}}
 \caption{Grid search for the parameters of ONS (a) and OLU (b) on the validation set of the custom dataset.} \label{fig:grid}
 \end{figure}
 
-Figure \ref{fig:wealth_custom} shows the results for the algorithms run on the custom dataset. The transaction rate was set to $\gamma=0.001$ for all the algorithms. The reason why UP and OGD outperform the other two algorithms in this dataset, is the fact that they kept a larger portion of their allocation in the VIX index throughout the investment period. This lead to larger gains in the last two months. On the other hand ONS and OLU had nearly none of the VIX index in their allocations towards the end of the period, because it was performing poorly during the previous months. This lead to great losses in the last months of the trading period, due to the decrease of the other assets. 
+Figure \ref{fig:wealth_custom} shows the results for the algorithms run on the custom dataset. The transaction rate was set to $\gamma=0.001$ for all the algorithms. The reason why UP and OGD outperform the other two algorithms in this dataset, is the fact that they kept a larger portion of their allocation in the VIX index throughout the investment period. This lead to larger gains in the last two months. On the other hand, ONS and OLU had nearly none of the VIX index in their allocations towards the end of the period, because it was performing poorly during the previous months. This lead to great losses in the last months of the trading period, due to the decrease of the other assets. 
 
 In Figure \ref{fig:costs_custom} we show the dependency of the wealth achieved by algorithms to the transaction rate parameter $\gamma$ for the run on this dataset. We see how OGD shows a near constant wealth in relation to the transaction costs parameter $\gamma$, while UP only has a mild decline in wealth for large value of $\gamma$. Conversely, we see how ONS and OLU have a rapid decline in wealth w.r.t. the transaction rate $\gamma$.
 
+This strengthens the findings we provided on the other datasets, \emph{i.e.}, that when large transaction costs are present OGD outperforms the other online algorithms.
+
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/new_experiemnts_1920.pdf}} 
+{\includegraphics[width=0.75\textwidth,keepaspectratio]{img/new_experiemnts_1920.pdf}} 
 \caption{Wealth $\tilde W_t$ achieved on the custom dataset described in Table \ref{tab:dataset_custom}, with $\gamma=0.001$.}
 \label{fig:wealth_custom}
 \end{figure}
 
 \begin{figure}[ht!]
 \centering
-{\includegraphics[width=0.70\textwidth,keepaspectratio]{img/new_experiemnts_1920_costs.pdf}} 
+{\includegraphics[width=0.75\textwidth,keepaspectratio]{img/new_experiemnts_1920_costs.pdf}} 
 \caption{APY computed on the wealth $W_T^C(\mathcal A)$, assuming costs given by $C_T(\mathcal A)$ for the custom dataset.}
 \label{fig:costs_custom}
 \end{figure}

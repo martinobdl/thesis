@@ -14,7 +14,6 @@ where $x^{(y)}$ is the probability assigned to outcome $y\in\mathcal Y$.
 \end{definition}
 
 In the case of simulable experts, the prediction $\mathbf x_t$ of the agent is a function of the history of outcomes $y^{t-1}:=\{y_1,y_2,\ldots,y_{t-1}\}$.
-
 The cumulative loss for the agent $\mathcal A$ is then given by:
 
 \begin{equation}
@@ -51,7 +50,7 @@ Moreover, the self information loss defined in Definition \ref{def:log_loss}, is
 
 \subsection{Laplace Mixture Forecaster}\label{sec:laplace_mixture}
 
-Fixing the log-loss we can show better regret bounds on the Mixture Forecaster for uncountable experts, introduced in Theorem \ref{th:mixture_forecaster}. The Mixture Forecaster with log-loss has regret bound (\cite{cesa2006prediction} Theorem 9.3)
+Fixing the log-loss we can show better regret bounds on the Mixture Forecaster for uncountable experts, introduced in Theorem \ref{th:mixture_forecaster}. The Mixture Forecaster with log-loss has regret bound (\cite{cesa2006prediction} Theorem 9.3):
 \begin{equation}
 R_T\le(N-1)\log(T+1),
 \end{equation}
