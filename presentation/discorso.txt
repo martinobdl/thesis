@@ -1,0 +1,88 @@
+========= INTRO ==========
+
+Buongiorno il mio nome Martino Bernasconi e vi presentare il mio lavoro di tesi che riguarda l'utilizzo di una tecnica di online Learning in particolare OGD per il problema di OPO con costi transazione.
+
+
+========= INDEX ==========
+
+Questo è l'outline della presentazione. Inizio con il contesto teorico del problema.
+
+
+=========== 3 ============
+
+Portfolio Optimization è un contesto generale in cui un investitore deve decidere come dividere il suo capitale è in delle azioni e guadagnerà o perderò ogni giorno relativamente a quanto ha investito in ogni azione e dal guadagno di ogni azione stessa. Ogni giorno investiamo una percentuale del nostro capitale in Google e Microsoft Apple e P&G, abbiamo investito molto in Apple che in quel giorno ha preso 2%, abbiamo investito poco in Microsoft che invece ne guadagnate 3%, e così via. Facciamo così evolvere il nostro capitale, che è rappresentato dalla linea nera nel secondo grafico.
+Esistono principalmente 2 modi per affrontare il problema. Il primo MPT, in poche parole il suo funzionamento è il seguente: si fanno delle assunzioni statistiche sui returns delle azioni. Dopo aver fatto queste assunzioni statistiche si ottimizza il valore atteso della del valore del per foglio un tempo futuro, a seconda la propria preferenza di rischio. Il problema di questo approccio è che in questo contesto le assunzioni statistiche sono difficilmente poi verificate in pratica, essendo l'ambiente altamente non stazionario.
+Quindi noi abbiamo deciso di affreontare il problema con delle tecniche parallele ovvero usiamo OPO, questo ci permette di non fare nessuna assunzione statistica, e in modo automatico investe nelle azioni e ci permette avere delle garanzie teoriche molto forti che valgono per qualsiasi distribuzione del mercato. In particolare questo approccio nasce da una formulazione GT del processo di investimento.
+
+
+=========== 4 ============
+
+Il frame work teorico generale è quello di Online Learning in particolare mi presenterò il framework particolare Learning con Expert advisor in cui ad ogni turno l'agente riceve le raccomandazioni da degli esperi, e deve comunicare poi in modo automatico la propria decisione Xt all'environment che, senza seguire un processo ma in modo potenzialmente anche avversario, restituisce all'agente una loss f_t funzione della della decisioni x_t, che quantifica la bontà della mia decisione x_t ad ogni turno.
+Le metriche importanti in questo framework sono sostanzialmente due: la regret e la complessità computazionale per turno. 
+Il concetto di regret nasce dal fatto che non si può usare come metrica di performance la loss dell'agente, essendo l'ambiente avversario. quindi si usa come performance la distanza tra la loss cumulativa osservata dall'agente e la più piccola loss osservata dagli esperti.
+Learning in questo contesto è quindi equivalente ad ottenere asintoticamente zero regret per round, per qualsiasi sequenza di loss scelte dall'avversario.
+Importante è anche la complessità computazionale e in generale c'è un Trade off tra la complessità computazionale dell'algoritmo e la regret sofferta allo stesso.
+
+=========== 5 ============
+
+Questo framework è in grado di descrivere Portfolio Optimization.
+La decisione presa dalla gente è un membro del simplesso che descrive l'allocazione del capitale nelle N azioni. la Loss che viene restituita dalla dall'ambiente è il logaritmo del prodotto interno tra la la decisione di distribuzione del capitale dell'agente e i return del mercato, ovvero rapporto tra il prezzo al giorno corrente e il prezzo al giorno passato. Infine gli esperti sono identificati con agenti che rispondono ad ogni turno predicendo un membro costante del simplesso (CRP). La regret in questo caso diventa il log del rapporto tra la wealth del miglior esperto BCRP e la wealth raggiunta dalla dall'agente. 
+Quindi fare asintoticamente zero regret si traduce in come avere a raggiungere asintoticamente lo stesso guadagno del miglior portfolio. 
+Una limitazione di questa formulazione è quella che stiamo escludendo i costi transazione, ovvero come viene esplicitamente implementata la strategia di trading nella pratica. E' noto che i costi transazione possono avere un impatto potenzialmente importante su sulle performance degli algoritmi.
+
+
+=========== 6 ============
+
+Quindi noi abbiamo deciso di considerare il problema esteso aggiungendo i costi transazione e abbiamo aggiunto alla regret un termine che quantifica quanto ci moviamo durante il processo di apprendimento, In particolare definiamo Total Regret come la Standard regret più un termine di costi transazione che è la norma L1 dei due portfolio consecutivi presi dall'agente e moltiplicati un parametro gamma costante che è il costo proporzionale di transazione.
+In particolare questo modello è un'approssimazione dei costi proporzionali transazione in cui il parametro di tc per comprare e vendere è uguale modello molto utilizzati letteratura per modellare i ct.
+
+
+=========== 7 ============
+
+Gli algoritmi nello stato dell'arte che abbiamo deciso di usare come comparison sono 3.
+per quanto riguarda OPO abbiamo selezionato UP e ONS due che hanno le migliori garanzie teoriche, e OLU in quanto l'unico che abbia garanzie teoriche sulla R_T^C.
+
+
+=========== 8 ============
+
+L'algoritmo che noi proponiamo per risolvere questo il problema di OPO con TC è un algoritmo che proviene da OCO è il primo algoritmo proposto in questo campo nel 2003.
+Il funzionamento è il seguente: la decisione ad ogni turno calcola che in questo modo: si prende x_t nel turno precedente si valuta la Loss osservata al turno precedente e si fa un passo di gradiente (linea 3) e visto che potenzialmente potremmo essere usciti del simplesso dobbiamo proiettare nel simplesso nostra decisione (linea 4). 
+Di conseguenza osserviamo la risposta del mercato e di conseguenza soffriamo una Loss.
+Un risultato già esistente in letteratura era quello sulla standard regret che troviamo in nel lavoro di zinchevich del 2003, che noi abbiamo applicato a OPO. 
+Inoltre abbiamo dimostrato che questo algoritmo ha garanzie teoriche per quanto riguarda R_T^C. osserviamo che abbiamo asintoticamente un algoritmo che fa zero regret perché la R_T^C è boundata con una funzione radice di T moltiplicate costanti che dipendono dal problema specifico e da dei parametri dell'algoritmo.
+
+
+=========== 9 ============
+
+In questa tabella vi mostro i risultati teorici che abbiamo sugli algoritmi che non ho scelto come confronto. Abbiamo che per quanto riguarda R_T ONS e UP sono metodi che raggiungono le R_T logaritmica quindi potenzialmente raggiungono zero una regret più velocemente. mentre OGD e OLU hanno regret radice di T.
+Mentre per quanto riguarda total regret UP e ONS non hanno garanzie teoriche mentre la nostra proposta OGD  fa regret radice in OPOTC e OLU, che era l'unico altro con ritmo nel OPOTC, fa regret lineare a meno che non si assume che i costi di transazione siano proporzionale radice di T, cosa che a noi sembra irragionevole.
+Per quanto riguarda la complessità computazionale per round. Il nostro algoritmo fanno T(N) anche se poi sperimentalmente OLU è più costoso, mentre UP e ONS sono metodi con ordine di complessità computazionale superiore e in particolare UP è T^N che potenzialmente risultato per N grande risulta proibitivamente costoso.
+I risultati storici ci indicano che per valori bassi di costi di transizione si dovrebbe usare OLU e UP mentre per costi di stagnazione importanti OGD sembrerebbe il più promettente.
+
+
+=========== 10 ===========
+
+Abbiamo poi eseguito una campagna sperimentale su gli algoritmi in particolare abbiamo considerato tre dataset utilizzati in letteratura OPO. Per brevità vi mostrerò i risultati solo per il primo dataset, anche gli altri dataset confermano le conclusioni che si evincono dal primo.
+
+ogni esperimento viene fatto campionando per 100 volte cinque asset random, questo per calcolare la media e gli intervalli di confidenza.
+In particolare riportiamo due metriche che sono a e guadagno medio annuale e i costi transazione normalizzati 
+
+
+=========== 11 ===========
+
+In questo primo grafico sull'asse X in scala logaritmica abbiamo riportato i costi transazione mentre sull'asse Y abbiamo il guadagno medio percentuale annuale.
+Possiamo notare come ONS sia l'algoritmo migliore per costi transazione piccoli ma ha un comportamento rispetto ai costi di transazione che le deteriora velocemente.
+
+
+=========== 12 ===========
+
+Mentre in verde osserviamo l'algoritmo proposto OGD che è molto efficace mantenere a una wealth costante contro i costi transazione 
+Per quanto riguarda questo grafico invece ti prendo sull'asse delle X è il tempo e sull'asse delle Y ai costi transazione per round, possiamo notare come OGD in verde sia il più efficace a tenere bassi i costi di transazione mentre OLU (in arancione) che dovrebbe ottimizzare i costi, invece li mantiene costanti.
+
+
+=========== 13 ===========
+
+Cosa abbiamo raggiunto in questo lavoro abbiamo introdotto un nuovo algoritmo nel campo di OPO con TC e abbiamo dimostrato la sua efficacia in OPO con TC e abbiamo ottenuto buoni risultati sperimentali su dataset reali.
+
+che cosa vorremmo continuare a fare in questo per continuare questo lavoro stiamo già valutando algoritmi che vengono in considerazione esplicitamente costi transazione nel passo di ottimizzazione e estendere la dimostrazione fatta per boundare i costi ad altri algoritmi di OCO.
+

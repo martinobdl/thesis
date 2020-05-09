@@ -1,0 +1,505 @@
+% Modelo de slides para projetos de disciplinas do Abel
+\documentclass[10pt]{beamer}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usepackage{appendixnumberbeamer}
+\usepackage[]{natbib}
+\usepackage{todonotes}
+\presetkeys{todonotes}{inline}{}
+
+
+% \usepackage[nottoc]{tocbibind}
+% \usepackage{biblatex}
+\renewcommand\appendixname{Appendix}
+
+\usepackage{subfig}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+% \pgfplotsset{compat=1.16}
+\allowdisplaybreaks
+
+\usepackage{xcolor}
+
+\definecolor{ultramarine}{RGB}{35,174,67}
+\definecolor{f3}{HTML}{61D77D}
+
+\makeatletter
+\def\mathcolor#1#{\@mathcolor{#1}}
+\def\@mathcolor#1#2#3{%
+  \protect\leavevmode
+  \begingroup
+    \color#1{#2}#3%
+  \endgroup
+}
+\makeatother
+
+\usepackage[usenames,dvipsnames]{pstricks}
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\usepackage[usenames,dvipsnames]{pstricks}
+\usepackage{epsfig}
+\usepackage{pst-grad} % For gradients
+\usepackage{pst-plot} % For axes
+\usepackage[space]{grffile} % For spaces in paths
+\usepackage{etoolbox} % For spaces in paths
+\makeatletter % For spaces in paths
+\patchcmd\Gread@eps{\@inputcheck#1 }{\@inputcheck"#1"\relax}{}{}
+\makeatother
+% User Packages:
+\usepackage{amssymb,amsthm,amsmath}
+\usepackage{mathtext}
+
+\usepackage{epsfig}
+\usepackage{pst-grad} % For gradients
+\usepackage{pst-plot} % For axes
+\usepackage[space]{grffile} % For spaces in paths
+\usepackage{etoolbox} % For spaces in paths
+\makeatletter % For spaces in paths
+\patchcmd\Gread@eps{\@inputcheck#1 }{\@inputcheck"#1"\relax}{}{}
+\makeatother
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\DeclareMathOperator*{\arginf}{arg\,inf}
+
+\makeatletter
+\setbeamertemplate{title page}{
+  \begin{minipage}[b][\paperheight]{\textwidth}
+    \centering  % <-- Center here
+    \ifx\inserttitlegraphic\@empty\else\usebeamertemplate*{title graphic}\fi
+    \vfill%
+    \ifx\inserttitle\@empty\else\usebeamertemplate*{title}\fi
+    \ifx\insertsubtitle\@empty\else\usebeamertemplate*{subtitle}\fi
+    \usebeamertemplate*{title separator}
+    \ifx\beamer@shortauthor\@empty\else\usebeamertemplate*{author}\fi
+    \ifx\insertdate\@empty\else\usebeamertemplate*{date}\fi
+    \ifx\insertinstitute\@empty\else\usebeamertemplate*{institute}\fi
+    \vfill
+    \vspace*{1mm}
+  \end{minipage}
+}
+
+\title{Online Gradient Descent for Online Portfolio Optimization with Transaction Costs}
+% \subtitle{Subtítulo}
+% \date{\today}
+\date{}
+\author{\bf{ Martino Nicol\a'o Bernasconi de Luca }\\ \footnotesize Supervisor: Francesco Trov\a'o \\
+Co-supervisors: Marcello Restelli, Edoardo Vittori}
+
+\institute[Politecnico di Milano]{\includegraphics[width=3cm]{./img/Logo_Politecnico_Milano.png}}
+% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+
+\begin{document}
+
+\begin{frame} 
+\centering 
+\titlepage 
+\end{frame}
+
+\begin{frame}{Table of contents}
+  \setbeamertemplate{section in toc}[sections numbered]
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{Context}
+
+\begin{frame}{Online Portfolio Optimization}
+
+
+\begin{columns}[T] % align columns
+\begin{column}{.41\textwidth}
+\onslide<1->{
+\vspace{-2em}
+\begin{figure}
+\centering
+ \scalebox{.43}{\hspace{1.5em}\input{./img/intro.tex}}
+\end{figure}
+}
+\vspace{-6em}
+\begin{figure}[t!]
+    \scalebox{.43}{\input{figures/fig_111.tex}}
+\end{figure}
+\end{column}
+\begin{column}{.45\textwidth}
+
+
+\onslide<2->{
+\vspace{2em}
+\begin{itemize}
+  \item Modern Portfolio Optimization:
+  \begin{itemize}
+    \item Statistical assumptions on the stock dynamics
+    \item Backward looking
+  \end{itemize}
+
+  \item Online Portfolio Optimization:
+  \begin{itemize}
+    \item Adversarial (no assumptions on the distribution)
+    \item From Online Learning field
+  \end{itemize}
+\end{itemize}
+}
+
+\end{column}
+
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Context: Online Learning with Experts Advice}
+
+\begin{figure}
+\centering
+ \scalebox{.45}{\input{./img/OnlineLearning.tex}}
+\end{figure}
+
+\onslide<5->{
+\begin{itemize}
+% \item $L_T(\mathcal A):=\sum\limits_{t=1}^Tf_t(x_t)$
+% \item $L_{T}^*:=\inf\limits_{e\in \mathcal E}\sum\limits_{t=1}^Tf_t(x_{e,t})$
+\item Regret: $R_T=\sum\limits_{t=1}^Tf_t(x_t)-\inf\limits_{e\in \mathcal E}\sum\limits_{t=1}^Tf_t(x_{e,t})$
+\begin{itemize}
+  \item No regret: $R_T=o(T)$ for any sequence $f_1,f_2,\ldots$
+\end{itemize}
+\item Per-round Computational Complexity
+\end{itemize}
+}
+\onslide<6->{
+\begin{figure}
+\centering
+ \scalebox{.4}{\input{./img/bilancino.tex}}
+\end{figure}
+}
+
+% \begin{columns}[T] % align columns
+% \begin{column}{.41\textwidth}
+% % \color{red}\rule{\linewidth}{4pt}
+
+% \end{column}%
+% \hfill%
+% \begin{column}{.55\textwidth}
+% % \color{blue}\rule{\linewidth}{4pt}
+
+
+% \end{column}%
+% \end{columns}
+
+% \onslide<6->{
+%         \begin{center}
+%             \begin{minipage}{10cm}
+%             \metroset{block=fill}
+%                 \begin{exampleblock}{No Regret}
+%                 % \centering
+%                 $\mathcal A$ learns if has per round zero regret asymptotically: $R_T=o(T)$ for any sequence $f_1,f_2,\ldots,$ of losses
+%                 \end{exampleblock}
+%             \end{minipage}
+%         \end{center}}
+
+\end{frame}
+
+\section{Problem Formulation}
+
+\begin{frame}{From Online Learning to Portfolio}
+
+\begin{itemize}
+\item $\mathbf x_t\in\Delta_{N-1}$ is the portfolio allocation
+\item $\mathbf y_t=\left(\frac{p_{t,1}}{p_{t-1,1}},\ldots,\frac{p_{t,N}}{p_{t-1,N}}\right)$ are the returns of the stocks
+\item $f_t(\mathbf x)=-\log(\langle\mathbf x,\mathbf y_t\rangle)$ is the loss
+\item $\mathcal E$ plays $\mathbf x_t=\mathbf x$ at each turn (Constant Rebalancing Portfolios). $\mathbf x^*=\arginf\limits_{x\in\Delta_{N-1}}\sum\limits_{t=1}^Tf_t(\mathbf x)$ is the Best Constant Rebalancing Portfolio
+\end{itemize}
+
+\onslide<2->{
+\metroset{block=fill}
+\begin{exampleblock}{Regret in Online Portfolio Optimization}
+%The regret $R_T$ becomes:
+$$R_T
+%=\sup\limits_{\mathbf x\in\Delta_{N-1}}\sum\limits_{t=1}^T\log(\langle\mathbf x,\mathbf y_t \rangle)-\log(\langle\mathbf x_t,\mathbf y_t \rangle)
+=\log(W_T(\mathbf x^*,\ldots,\mathbf x^*)/W_T(\mathbf x_1,\ldots,\mathbf x_T)),$$
+where $W_T(\mathbf x_1,\ldots,\mathbf x_T)=\prod\limits_{t=1}^T\langle\mathbf x_t,\mathbf y_t\rangle$ is the wealth %obtained by playing the portfolio sequence $\mathbf x_1,\ldots,\mathbf x_T$
+\end{exampleblock}
+}
+
+\onslide<3->{
+\textbf{Limitations:} No transaction costs
+}
+
+\end{frame}
+
+\begin{frame}{Adding Trading Costs}
+
+% How much do we move during learning?
+% How much do we pay in transaction costs?
+
+\metroset{block=fill}
+\begin{exampleblock}{Regret in Online Portfolio Optimization with Transaction Costs}
+
+$$R^C_T
+%=\sup\limits_{\mathbf x\in\Delta_{N-1}}\sum\limits_{t=1}^T\log(\langle\mathbf x,\mathbf y_t \rangle)-\log(\langle\mathbf x_t,\mathbf y_t \rangle)
+=\underbrace{\log(W_T(\mathbf x^*,\ldots,\mathbf x^*)/W_T(\mathbf x_1,\ldots,\mathbf x_T))}_{R_T \text{: standard regret}}+\underbrace{\gamma\sum\limits_{t=1}^T||\mathbf x_t-\mathbf x_{t-1}||_1}_{C_T \text{: transaction costs}},$$
+where $\gamma$ is the transaction rate
+\end{exampleblock}
+
+%This is derived naturally from proportional transaction costs:
+
+% $$W_T(\mathbf x_1,\ldots,\mathbf x_T)=\prod\limits_{t=1}^T\alpha_t\langle\mathbf x_t,\mathbf y_t\rangle,$$ 
+% where $\alpha_t\in[0,1]$ is the percentage of wealth left after incurring in some transaction costs. $\alpha_t$ is defined as: $\alpha_t:=1 - \gamma||\mathbf x_t - \mathbf x_{t-1}||_1$.
+
+% Proportional Transaction costs: $\alpha_t:=1 - \gamma|| \alpha_t\mathbf x_t - \mathbf x'_{t-1}||_1$, $\mathbf x'_{t}=\frac{\mathbf x_t\otimes \mathbf y_t}{\langle\mathbf x_t,\mathbf y_t\rangle}$.
+
+$\gamma$ is the proportional transaction rate for buying and selling stocks
+\end{frame}
+
+\section{State of the Art}
+
+% \begin{frame}{State of the Art Algorithms}
+
+% \begin{itemize}
+%   \item Algorithms for Online Portfolio Optimization:
+%   \begin{itemize}
+%   \item Universal Portfolios (UP) [\cite{cover1996universal}]
+%   \item Online Newton Step (ONS) [\cite{agarwal2006algorithms}]
+%   \end{itemize}
+%     \item Algorithms for Online Portfolio Optimization with transaction costs:
+%   \begin{itemize}
+%     \item Online Lazy Updates [\cite{das2013online}]
+%   \end{itemize}
+% \end{itemize}
+
+% \end{frame}
+
+\begin{frame}{State of the Art Algorithms}
+
+\begin{itemize}
+  \item \textbf{Online Portfolio Optimization}:
+  \begin{itemize}
+    \item \alert{Online Newton Step (ONS) [\cite{agarwal2006algorithms}]}
+    \item \alert{Universal Portfolios (UP) [\cite{cover1996universal}]}
+  \end{itemize}
+  \item \textbf{Online Portfolio Optimization with Transaction Costs}:
+  \begin{itemize}
+    \item \alert{Online Lazy Updates (OLU) [\cite{das2013online}]}
+  \end{itemize}
+  \item \textbf{Heuristics}:
+  \begin{itemize}
+    \item Passive Aggressive Mean Reversion (PAMR) [\cite{li2012pamr}]
+    \item Online Moving Average Reversion (OLMAR) [\cite{li2015moving}]
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\section{Proposed Solution}
+
+\begin{frame}{Online Gradient Descent}
+\onslide<1->{
+\renewcommand{\thealgorithm}{1}
+\begin{algorithm}[H]
+\small
+    \caption{OGD in Online Portfolio Optimization with Transaction Costs}
+    \label{alg:OGD_in_OPO}
+    \begin{algorithmic}[1]
+    \REQUIRE learning rate sequence $\{\eta_1, \ldots, \eta_T\}$  \nonumber
+    \STATE Set $\mathbf{x}_1 \gets \frac{1}{N} \mathbf{1}$ \label{line:init_OGD}
+    \FOR {$t \in \{ 1, \ldots, T \}$}
+    \STATE $\mathbf{z}_{t+1} \gets \mathbf{x}_{t}+ \eta_t \frac{\mathbf{y}_t}{\langle \mathbf{y}_t,\mathbf{x}_t \rangle}$ \label{line:update_OGD}
+    \STATE Select Portfolio $\mathbf x_{t+1}=\arginf\limits_{\mathbf x\in\Delta_{N-1}}||\mathbf z_t-\mathbf x||_2^2$ \label{line:line_projection_OGD}
+
+    \STATE Observe $\mathbf{y}_{t+1}$ from the market \label{line:out_OGD}
+    \STATE Get wealth $\log( \langle \mathbf{y}_{t+1},\mathbf{x}_{t+1} \rangle) - \gamma|| \mathbf{x}_{t+1} - \mathbf{x}_{t} ||_1$ \label{line:wealth}
+    \ENDFOR
+    \end{algorithmic}
+\end{algorithm}
+}
+\vspace{-1.5em}
+\begin{columns}[T] % align columns
+\begin{column}{.50\textwidth}
+\metroset{block=fill}
+\begin{exampleblock}{Regret [\cite{zinkevich2003online}]}
+\vspace{1.2em}
+$$R_T\le\left( \frac{1}{K} + \frac{N K \epsilon_u^2}{\epsilon_l^2} \right) \sqrt{T}$$
+
+\end{exampleblock}
+
+\end{column}
+
+\begin{column}{.50\textwidth}
+\metroset{block=fill}
+\begin{exampleblock}{Total Regret (this work)}
+
+$$R_T^C\le \left[\hspace{-0.1em} \frac{1}{K}\hspace{-0.1em} +\hspace{-0.1em} \frac{NK\epsilon_u}{\epsilon_l}\hspace{-0.1em}\hspace{-0.1em}\left( \frac{\epsilon_u}{\epsilon_l} + 2 \gamma \right)\hspace{-0.2em} \right]\hspace{-0.3em} \sqrt{T}$$
+
+\end{exampleblock}
+
+\end{column}
+
+\end{columns}
+
+
+
+% \begin{figure}
+% \centering
+%  \scalebox{.55}{\input{./img/OGD.tex}}
+% \end{figure}
+
+\end{frame}
+
+% \begin{frame}{Theoretical Results of Online Gradient Descent}
+
+% \begin{itemize}
+% \item Standard Regret:
+% $$R_T\le\left( \frac{1}{K} + \frac{N K \epsilon_u^2}{\epsilon_l^2} \right) \sqrt{T} $$
+% \item Regret on the Costs: 
+% $$\mathcolor{ultramarine}{C_T\le \frac{2 N K \gamma \epsilon_u}{\epsilon_l} \sqrt{T}}$$
+% \item Total regret: 
+% $$R_T^C\le \left[ \frac{1}{K} + \frac{NK\epsilon_u}{\epsilon_l}\left( \frac{\epsilon_u}{\epsilon_l} + 2 \gamma \right) \right] \sqrt{T}$$
+
+% \end{itemize}
+
+% \end{frame}
+
+\begin{frame}{Theoretical and Computational Comparison}
+
+Comparison of the theoretical guarantees and computational complexity among the selected algorithms
+
+\begin{table}[ht!]\centering\small
+\begin{tabular}{ |c||c|c|c|c| }
+ %\hline
+ %\multicolumn{5}{|c|}{Comparison} \\
+ \hline
+  & \textbf{OGD} & \textbf{UP} & \textbf{ONS} & \textbf{OLU}\\
+ \hline
+ \hline
+ $R_T$ & $\mathcal O(\sqrt T)$  & $\mathcolor{ultramarine}{\mathcal O(\log T)} $ & $\mathcolor{ultramarine}{\mathcal O(\log T)}$ & $\mathcal O(\sqrt T)$ \\
+ \hline
+ $R^C_T$ & $\mathcolor{ultramarine}{\mathcal O(\sqrt T)}$ & - & - & $\mathcal O(T)$\footnote{Assuming $\gamma=const.$, if $\gamma\propto\sqrt T$ then $R_T^C=\mathcal O(\sqrt T)$}\\
+ \hline
+ Complexity & $\mathcolor{ultramarine}{\Theta(N)}$ & $\Theta (T^N)$ & $\Theta (N^2)$  & $\mathcolor{ultramarine}{\Theta (N)}$\\
+ \hline
+\end{tabular}
+%\caption{Comparison between the theoretical guarantees of the selected algorithms .}\label{tab:comparison}
+\end{table}
+
+
+\end{frame}
+
+% \begin{frame}{Online Mirror Descent and why OGD works}
+% \end{frame}
+
+\section{Experiments}
+
+\begin{frame}{Experimental Setting}
+
+\begin{table}[ht!]\centering\small
+\begin{tabular}{ |c||c|c|c|c| }
+ \hline
+ \multicolumn{5}{|c|}{Datasets} \\
+ \hline
+ Name & Market &Year Span & Days & Assets\\
+ \hline
+ \textbf{NYSE(O)} & New York Stock Exchange  & 1962 - 1984  &5651&   36\\
+ TSE & Toronto Stock Exchange & 1994 - 1998  & 1258   &88\\
+ SP500 & Standard Poor's 500 & 1998 - 2003 & 1276&  25\\
+ \hline
+\end{tabular}
+%\caption{Description of the main datasets used commonly in the Online Portfolio Optimization literature.}\label{tab:dataset}
+\end{table}
+
+\textbf{Performance Metrics}:
+
+Sample for $100$ times, $5$ randomly drawn assets
+
+\begin{itemize}
+  \item Average Annual Percentage Yield (APY) defined as 
+$$A(W_T)=W_T^{250/T} - 1$$
+\item Normalized per round transaction costs $\frac{C_t(\mathfrak U)}{\gamma t}$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Results on the NYSE(O) dataset}
+
+\begin{figure}[t!]
+    \input{figures/fig_w_decay_l1.tex}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Results on the NYSE(O) dataset}
+
+\begin{figure}[t!]
+    \input{figures/fig_costs.tex}
+\end{figure}
+
+\end{frame}
+
+\section{Conclusions}
+
+\begin{frame}{Conclusions and Future Work}
+
+\textbf{Contributions:}
+\begin{itemize}
+\item OGD in online portfolio optimization
+\item Analysis of the total regret of OGD
+\item Experimental campaign on real data
+\end{itemize}
+
+\textbf{Future Works:}
+
+\begin{itemize}
+  \item Develop cost aware algorithms (work in progress)
+  \item Generalize the regret analysis to other online learning algorithms
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+  \bibliographystyle{apalike}
+  %\bibliographystyle{abbrv}
+  \bibliography{bibl_thesis.bib}
+  
+
+\end{frame}
+
+\section{Appendix}
+
+\appendix
+
+\begin{frame}{Results on the SP500 dataset (proportional transaction costs)}
+
+\begin{figure}[t!]
+    \input{figures/fig_w_decay_true.tex}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Results on the TSE dataset}
+
+\begin{figure}[t!]
+    \input{figures/fig_w_decay_tse.tex}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Results on the SP500 dataset}
+
+\begin{figure}[t!]
+    \input{figures/fig_w_decay_sp.tex}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Comparison of Algorithms (single run of NYSE(O))}
+
+\begin{figure}[t!]
+    \input{./figures/fig_11.tex}
+\end{figure}
+
+\end{frame}
+
+
+\end{document}

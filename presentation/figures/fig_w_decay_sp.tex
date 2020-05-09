@@ -1,0 +1,64 @@
+\pgfplotsset{every tick label/.append style={font=\tiny}}
+\colorlet{colorUP}{red}
+\colorlet{colorOGD}{green!50.0!black}
+\colorlet{colorONS}{blue}
+\definecolor{colorOLU}{rgb}{0.75,0.75,0}
+\begin{tikzpicture}
+
+    \begin{semilogxaxis}
+    [
+        height = 8cm,
+        width = 9cm,
+        legend cell align={left},
+        legend style={at={(0.03,0.03)}, anchor=south west, draw=white!80.0!black},
+        tick align=outside,
+        tick pos=left,
+        x grid style={white!69.01960784313725!black},
+        xlabel={$\gamma$},
+        xmin=0.00009, xmax=0.045,
+        ymin=-0.01, ymax=0.2,
+        xtick style={color=black},
+        xtick ={0.0001,0.001,0.006,0.04},
+        xticklabels={$0$, $0.001$, $0.006$, $0.04$},
+        y grid style={white!69.01960784313725!black},
+        ylabel={$A(W_T)$},
+        ytick style={color=black},
+        yticklabels={$-0.15$, $-0.1$, $-0.05$, $0.0$, $0.05$, $0.1$, $0.15$, $0.2$},
+        ytick = {-0.15,-0.1,-0.05,0,0.05,0.1,0.15,0.2},
+        ymin=-0.15, ymax=0.2,
+        yticklabel style={rotate=90},
+    ]
+
+    %OGD
+    \addplot [stack plots=false, semithick, colorOGD, mark = o]  table[x expr=\thisrowno{0}, y expr=\thisrowno{1}] {./figures/fig_wealth_decay_sp/ogd_costs_l1.txt};
+    \addlegendentry{OGD}
+    \addplot[name path=A,fill=none, draw=none,stack plots=false,forget plot]  table[x expr=\thisrowno{0}, y expr=\thisrowno{2}]
+    {./figures/fig_wealth_decay_sp/ogd_costs_l1.txt};
+    \addplot[name path=B,fill=none, draw=none,stack plots=false,forget plot]  table[x expr=\thisrowno{0}, y expr=\thisrowno{3}]
+    {./figures/fig_wealth_decay_sp/ogd_costs_l1.txt};
+    \addplot[colorOGD, opacity=0.3,forget plot] fill between[of=A and B];
+    
+    %UP
+    \addplot [stack plots=false, semithick, colorUP, mark = square]  table[x expr=\thisrowno{0}, y expr=\thisrowno{1}] {./figures/fig_wealth_decay_sp/up_costs_l1.txt};
+    \addlegendentry{UP}
+    \addplot[name path=A,fill=none, draw=none,stack plots=false,forget plot]  table[x expr=\thisrowno{0}, y expr=\thisrowno{2}] {./figures/fig_wealth_decay_sp/up_costs_l1.txt};
+    \addplot[name path=B,fill=none, draw=none,stack plots=false,forget plot]  table[x expr=\thisrowno{0}, y expr=\thisrowno{3}] {./figures/fig_wealth_decay_sp/up_costs_l1.txt};
+    \addplot[colorUP, opacity=0.3,forget plot] fill between[of=A and B];
+    
+    %OLU
+    \addplot [stack plots=false, semithick, colorOLU, mark = diamond]  table[x expr=\thisrowno{0}, y expr=\thisrowno{1}] {./figures/fig_wealth_decay_sp/olu_costs_l1.txt};
+    \addlegendentry{OLU}
+    \addplot[name path=A,fill=none, draw=none,stack plots=false,forget plot]  table[x expr=\thisrowno{0}, y expr=\thisrowno{2}] {./figures/fig_wealth_decay_sp/olu_costs_l1.txt};
+    \addplot[name path=B,fill=none, draw=none,stack plots=false,forget plot]  table[x expr=\thisrowno{0}, y expr=\thisrowno{3}] {./figures/fig_wealth_decay_sp/olu_costs_l1.txt};
+    \addplot[colorOLU, opacity=0.3,forget plot] fill between[of=A and B];
+    
+    %ONS
+    \addplot [stack plots=false, semithick, colorONS, mark = triangle]  table[x expr=\thisrowno{0}, y expr=\thisrowno{1}] {./figures/fig_wealth_decay_sp/ons_costs_l1.txt};
+    \addlegendentry{ONS}
+    \addplot[name path=A,fill=none, draw=none,stack plots=false,forget plot]  table[x expr=\thisrowno{0}, y expr=\thisrowno{2}] {./figures/fig_wealth_decay_sp/ons_costs_l1.txt};
+    \addplot[name path=B,fill=none, draw=none,stack plots=false,forget plot]  table[x expr=\thisrowno{0}, y expr=\thisrowno{3}] {./figures/fig_wealth_decay_sp/ons_costs_l1.txt};
+    \addplot[colorONS, opacity=0.3, forget plot] fill between[of=A and B];
+    
+    \end{semilogxaxis}
+
+\end{tikzpicture}

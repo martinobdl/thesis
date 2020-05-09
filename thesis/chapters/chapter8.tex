@@ -1,0 +1,16 @@
+\chapter{Conclusions}\label{ch:conclusions}
+
+Automated trading systems are becoming increasingly more central in the modern financial landscape \cite{treleaven2013algorithmic}. We explored an orthogonal approach to classical portfolio optimization methods that relies on concept of game theory and information theory. Since the most important properties of these methods are their strong theoretical guarantees on the wealth achieved by the algorithms, we extended the theoretical framework to include transaction costs and to recover the analytical guarantees under this, more realistic, framework.
+
+Indeed, the focus of this thesis is to bound analytically transaction costs in the Online Portfolio Optimization problem.
+We achieved this result by adapting, for the first time, to this context an algorithm from the field of Online Convex Optimization: \emph{Online Gradient Descent}.
+At first, we showed that OGD has a total regret of the order of $\mathcal{O}(\sqrt{T})$, and a per-step computational complexity of $\Theta(N)$.
+Then we showed that the other algorithm available in literature that provides theoretical guarantees in this context relies on unrealistic assumptions (OLU).
+Finally, we compared the empirical performance of OGD with state-of-the-art algorithms on real datasets, and provided insights into the settings in which it is likely to provide a larger cumulative wealth.
+
+\section{Future Developments}
+Future developments of this work are twofold.
+Firstly we think that it would be possible to extend the transaction cost bound to a wider class of algorithms, \emph{e.g.}, the ones derived from Online Mirror Descent (OMD), in particular by exploiting the mirror interpretation of the OMD algorithm that relies on the concept of Fenchel conjugate, described in Section \ref{sec:mirror_version}.
+On the other hand, even if the OGD already keeps the transaction costs at a pace, a possible extension would be to include costs as an explicit term in the objective function, \emph{i.e.}, to develop cost-aware algorithms which still provide strong theoretical results.
+
+Moreover, it would be interesting to extend the transaction costs model to include other kind of impediments encountered in a practical trading environment, such as liquidity constraints and market impact.
